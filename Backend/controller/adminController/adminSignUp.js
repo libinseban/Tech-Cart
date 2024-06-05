@@ -15,7 +15,7 @@ const adminPassword = process.env.ADMIN_PASSWORD;
             throw new Error("Admin already exists");
         }
 
-        const hashedPassword = await bcrypt.hash(adminPassword, 10);
+        const hashedPassword = bcrypt.hash(adminPassword, 10);
 
         // Create the admin
         const adminData = new adminModel({
@@ -27,7 +27,7 @@ const adminPassword = process.env.ADMIN_PASSWORD;
         const saveAdmin = await adminData.save();
 
         // Generate token
-        const token = jwt.sign({ id: saveAdmin._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ id: adminData._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
 
         // Set token in cookie
         res.cookie('token', token, { httpOnly: true });

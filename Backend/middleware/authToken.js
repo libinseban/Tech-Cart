@@ -1,6 +1,6 @@
 async function authToken(req,res,next) {
     try {
-        const token = req.cookie.token || req.header
+        const token = req.cookie.token || req.header.token
      console.log("token", token)   
     } catch (err) {
         res.status(400).json({

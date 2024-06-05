@@ -1,10 +1,4 @@
 const jwt = require('jsonwebtoken');
-
-const generateToken = (adminId) => {
-    const token = jwt.sign({ adminId }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
-    return token;
-};
-
 const adminModel = require("../../models/client/adminModel");
 const bcrypt = require("bcryptjs");
 
@@ -20,7 +14,7 @@ const adminSignIn = async (req, res) => {
 
         let admin = await adminModel.findOne({email: adminEmail});
         if (email != admin.email) {
-            return res.status(401).json({ message: 'Admin not found. Please sign up first.' });
+            return res.status(401).json({ message: 'Admin not found.. ' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, admin.password);
@@ -31,10 +25,22 @@ const adminSignIn = async (req, res) => {
 
 
         if (isPasswordValid && admin) {
-            const token = generateToken(admin._id);
-            res.cookie("access_token", token, { httpOnly: true });
-    
-            res.status(200).json({ message: 'Login successful' });
+            // Generate token
+           
+            const tokenData = {
+                _id: admin._id,
+                email: admin.email,
+            };
+            const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
+                expiresIn: "1d",
+            });
+          
+       // Send token in response
+res.cookie("access_token", token, { httpOnly: true, secure: true }).json({
+    success: "Login Successful",
+    token: token,
+});
+
         }
       
     } catch (error) {

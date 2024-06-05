@@ -1,68 +1,85 @@
-const mongoose = require('mongoose');
+const mongoose=require ('mongoose')
 
-const productSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  discountPrice: {
-    type: Number,
-    required: true,
-  },
-  discountPercentage: {
-    type: Number,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-  brand: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-  },
-  sizes: [
-    {
-      name: { type: String },
-      quantity: { type: Number }
-    }
-  ],
-  imageUrl: {
-    type: String,
-  },
-  ratings: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Rating", // Assuming 'Rating' is the model name
-  }],
-  reviews: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Review" // Assuming 'Review' is the model name
-  }],
-  numRatings: {
-    type: Number,
-    default: 0,
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category" // Assuming 'Category' is the model name
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-});
 
-const Product = mongoose.model("Product", productSchema);
+const productShema=new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+       
+      },
+      description: {
+        type: String,
+        required: true
+      },
+      price: {
+        type: Number,
+        required: true,
+     
+      },
+      discountedPrice : {
+        type: Number,
+        required: true,
+     
+      },
+      discountPercentage: {
+        type: Number,
+       required:true,
+       
+     
+      },
+      quantity: {
+        type: Number,
+        required: true,
+     
+      },
+      brand:
+        {
+            type: String,
+           
+        }
+    ,
+     color:
+        {
+            type: String, 
+        }
+      , sizes: {
+        type: [Number],
+        required: true
+      },
+     
+      imageUrl:
+        {
+            type: String,
+        },
+        ratings: [{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"ratings",
+           
+          }],
 
-module.exports = Product;
+          reviews: [{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"reviews"
+           
+          }],
+          numratings: {
+            type: Number,
+           default:0,
+         
+          },
+          category: {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"category"
+           
+          },
+          createAt:
+          {
+              type: Date,
+              default:Date.now
+          }
+      ,  
+})
+
+const product=mongoose.model("product",productShema)
+
+module.exports=product;

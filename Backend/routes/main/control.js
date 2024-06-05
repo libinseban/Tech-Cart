@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Seller = require('../../models/client/seller');
 
-// GET pending sellers
+
 router.get('/pendingSellers', async (req, res) => {
     try {
         const pendingSellers = await Seller.find({ isApproved: false });
@@ -13,7 +13,7 @@ router.get('/pendingSellers', async (req, res) => {
     }
 });
 
-// PUT approve seller
+
 router.put('/approveSeller/:id', async (req, res) => {
     const { id } = req.params;
     try {

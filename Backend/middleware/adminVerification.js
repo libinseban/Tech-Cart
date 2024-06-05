@@ -1,16 +1,15 @@
-async function adminToken(req,res,next) {
+const adminToken = (req, res, next) => {
     try {
-        const token = req.cookie.token || req.header
-     console.log("token", token)   
+        const token = req.cookie.token
+        console.log("token", token);   
     } catch (err) {
-        res.status(400).json({
+        res.send(400).json({
             message: err.message || err,
             data:[],
             success: false,
             error:true
-        })
+        });
     }
-    next()
-}
-
+    next();
+};
 module.exports=adminToken

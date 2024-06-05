@@ -1,50 +1,68 @@
-const mongoose = require("mongoose");
+const mongoose=require ('mongoose')
 
-var userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    role: {
-      type: String,
-      default: "user",
-    },
-    profilePic: {
-      type: String, // Assuming profilePic is a URL pointing to the user's profile picture
-    },
-    isBlocked: {
-      type: Boolean,
-      default: false,
-    },
-    cart: {
-      type: Array,
-      default: [],
-    },
-    address: {
-      type: String,
-    },
-    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-    refreshToken: {
-      type: String,
-    },
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+
+const userShema=new mongoose.Schema({
+  firstName: {
+    type: String,
+   required: true 
   },
-  {
-    timestamps: true,
-  }
-);
+      lastName: {
+        type: String,
+        required: true,
+       
+  },
+  profilePic:{ type: String},
+      hashPassword: {
+        type: String,
+        required: true,
+     
+      },
+      email: {
+        type: String,
+        required: true,
+     
+      },
+      role: {
+        type: String,
+        required: true,
+        default:"CUSTOMER"
+     
+      },
+      phone: {
+        type: String,
+        required:Number
+      
+      },
+      address:[
+        {
+          type:mongoose.Schema.Types.ObjectId,
+              ref:"address",
+            required:true
+        }
+      ],
+      paymentInformation:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"payment_information"
+        }
+      ],ratings:[
+        {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:" ratings"
+    }
+      ],
+      reviews:[
+        {
+            type:mongoose.Schema.Types.ObjectId, 
+            ref:" reviews"
+        }
+      ],
+     
+      createdAt:{
+        type:Date,
+        default:Date.now()
+      }
+})
+const User=mongoose.model("User",userShema)
 
-const userModel = mongoose.model("User", userSchema);
-module.exports = userModel;
+module.exports=User;

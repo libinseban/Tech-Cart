@@ -39,6 +39,8 @@ const cardShema=new mongoose.Schema({
      
      
    
+}, {
+  useFindAndModify: false, // Add this line
 });
 
 const Card=mongoose.model("cart",cardShema)

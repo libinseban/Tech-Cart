@@ -1,38 +1,80 @@
-const mongoose = require("mongoose"); 
-var orderSchema = new mongoose.Schema(
-  {
-    products: [
-      {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-        },
-        count: Number,
-        color: String,
-      },
-    ],
-    paymentIntent: {},
-    orderStatus: {
-      type: String,
-      default: "Not Processed",
-      enum: [
-        "Not Processed",
-        "Cash on Delivery",
-        "Processing",
-        "Dispatched",
-        "Cancelled",
-        "Delivered",
-      ],
-    },
-    orderby: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+const mongoose=require ('mongoose')
 
-//Export the model
-module.exports = mongoose.model("Order", orderSchema);
+
+const orderShema=new mongoose.Schema({
+    user: {
+        type:mongoose.Schema.Types.ObjectId,
+            ref:"User"
+       
+      },
+      orderItems: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Orderitem'
+    }],
+      orderDate: {
+        type: Date,
+        required: true,
+     
+      },
+     deliveryDate: {
+        type: Date,
+
+       
+     
+      },
+      shippingAddress: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"address"
+     
+      },
+      paymentDetails: {
+       paymentMethod:{
+        type:String,
+       },
+       transactionId:{
+        type:String,
+
+       },
+       paymentId:{
+        type:String,
+
+       },
+       paymentStatus:{
+         type:String,
+       }
+     
+      },
+      
+      totalPrice:{
+        type:Number,
+        required:true
+      },
+      totalDiscountPrice:{    
+        type:Number,
+        required:true
+      },
+      discounte:{
+        type:Number,
+        required:true
+      },
+      orderStatus:{
+        type:String,
+        required:true,
+        default:'PENDING'
+      },
+      totalItem:{
+        type:Number,
+        required:true
+      },
+      createAd:{
+        type:Date,
+        required:Date.now,
+      },
+
+
+
+})
+
+const order=mongoose.model("order",orderShema)
+
+module.exports=order;

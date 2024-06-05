@@ -2,15 +2,15 @@
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const { CreateCart } = require("../orderController/cartControl");
 const userSignUpController = async (req, res) => {
     try {
-        const { email, password, name, profilePic } = req.body;
+        const { email, password, firstName,lastName, profilePic } = req.body;
         const findUser = await userModel.findOne({ email });
         if (findUser) {
             return res.status(400).json({ message: "User already exists" });
         }
-        if (!email || !password || !name) {
+        if (!email || !password || !firstName||!lastName) {
             return res.status(400).json({ message: "Please fill out all fields" });
         }
         const salt = bcrypt.genSaltSync(10);
@@ -18,21 +18,23 @@ const userSignUpController = async (req, res) => {
 
         const user = new userModel({
             email,
-            password: hashPassword,
-            name,
+            hashPassword,
+            firstName,
+            lastName,
             profilePic,
-            role: "GENERAL"
+           
         });
 
         const savedUser = await user.save();
+        
+        
+        const newUserCreated = await CreateCart(savedUser._id);
 
-        // Generate token
-        const token = jwt.sign({ userId: savedUser._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
-
-        // Set token in cookies
+        console.log(savedUser)
+   
+        const token = jwt.sign({ userId: savedUser._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1d' });
         res.cookie('access_token', token, {
             httpOnly: true,
-            expires: new Date(Date.now() + 3600000), // 1 hour expiry
             secure: false,
             
         });
