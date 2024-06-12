@@ -11,7 +11,7 @@ const User=require('../../models/client/userModel')
 async function createorder( user,shippAddress) {
     try {
         console.log(shippAddress);
-        const user='665d8e8f091160682bfe82cf';
+        const user=req.user;
        
         let address;
       if(shippAddress._id){
@@ -65,7 +65,7 @@ const cart = await cartService.findUserCart(user._id);
             orderItems:orderItemsId,
             totalPrice: cart.totalPrice,
             totalDiscountPrice: cart.totalDiscountPrice,
-            discounte:cart.discounte,
+            discount:cart.discount,
             totalItem: cart.totalItem,
             shippAddress: address,
             orderDate: new Date(),

@@ -2,7 +2,8 @@
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { CreateCart } = require("../orderController/cartControl");
+const {CreateCart}  = require("../service/cartService");
+const genereteToken = require("../../middleware/generateToken");
 const userSignUpController = async (req, res) => {
     try {
         const { email, password, firstName,lastName, profilePic } = req.body;
@@ -30,15 +31,12 @@ const userSignUpController = async (req, res) => {
         
         const newUserCreated = await CreateCart(savedUser._id);
 
-        console.log(savedUser)
+        console.log(newUserCreated)
    
-        const token = jwt.sign({ userId: savedUser._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1d' });
-        res.cookie('access_token', token, {
-            httpOnly: true,
-            secure: false,
-            
-        });
-console.log(token)
+      
+        const token = genereteToken(newUserCreated._id);
+        res.cookie("token", token);
+
         res.status(200).json({
             id: savedUser._id,
             data: savedUser,

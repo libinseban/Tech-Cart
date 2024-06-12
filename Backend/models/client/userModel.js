@@ -14,7 +14,7 @@ const userShema=new mongoose.Schema({
   profilePic:{ type: String},
       hashPassword: {
         type: String,
-        required: true,
+       
      
       },
       email: {
@@ -24,7 +24,7 @@ const userShema=new mongoose.Schema({
       },
       role: {
         type: String,
-        required: true,
+        
         default:"CUSTOMER"
      
       },
@@ -48,13 +48,13 @@ const userShema=new mongoose.Schema({
       ],ratings:[
         {
         type:mongoose.Schema.Types.ObjectId,
-        ref:" ratings"
+        ref:" rating"
     }
       ],
       reviews:[
         {
             type:mongoose.Schema.Types.ObjectId, 
-            ref:" reviews"
+            ref:" review"
         }
       ],
      

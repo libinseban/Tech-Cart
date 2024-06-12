@@ -4,12 +4,12 @@ const mongoose=require ('mongoose')
 const ratingShema=new mongoose.Schema({
     users:{
         type:mongoose.Schema .Types.ObjectId,
-        ref:"users",
+        ref:"User",
         require:true
       },
       product:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"products",
+        ref:"Product",
         require:true
       },
       rating: {
@@ -24,6 +24,6 @@ const ratingShema=new mongoose.Schema({
               default:Date.now
           }
     })
-    const Rating=mongoose.model("ratings",ratingShema)
+    const Rating=mongoose.model("rating",ratingShema)
 
 module.exports=Rating;

@@ -7,12 +7,13 @@ const adminToken=require("../../middleware/adminVerification")
 const adminLogout = require("../../controller/adminController/adminLogOut")
 const OrderController = require("../../controller/adminController/adminOrder")
 const productController=require('../../controller/orderController/productControl');
-
-
+const customerProductRoutes=require("../cart/customerProductRouter")
+const adminProductRouter=require("../service/adminProductRoutes")
 adminRouter.post("/signup",adminSignUp)
 adminRouter.post("/signin", adminSignIn)
 adminRouter.post("/control", adminToken, control)
-adminRouter.post('/add-product',productController.createProduct);
+adminRouter.use('/products', customerProductRoutes);
+adminRouter.use('/products', adminProductRouter);
 adminRouter.post('/creates',adminToken,productController.createMultiProduct);
 adminRouter.delete('/:id',productController.deleteProduct);
 adminRouter.put('/:id',adminToken,productController.updateProduct);

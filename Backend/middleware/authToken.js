@@ -1,16 +1,21 @@
-async function authToken(req,res,next) {
-    try {
-        const token = req.cookie.token || req.header.token
-     console.log("token", token)   
-    } catch (err) {
-        res.status(400).json({
-            message: err.message || err,
-            data:[],
-            success: false,
-            error:true
-        })
-    }
-    next()
-}
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-module.exports=authToken
+const authToken = (req, res, next) => {
+  const token = req.cookies.token
+  if (!token) {
+    console.error("No token provided");
+    return res.status(401).send("Access Denied. No token provided.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+    req.user = { userId: decoded.userId.toString() };
+    next();
+  } catch (error) {
+    console.error("Invalid token", error);
+    res.status(400).send("Invalid token.");
+  }
+};
+
+module.exports = authToken;

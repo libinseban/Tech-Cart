@@ -5,14 +5,10 @@ const orderItemShema=new mongoose.Schema({
   
     product:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"product",
+        ref:"Product",
         require:true
       },
-      size: {
-        type: String,
-      
-     
-      },
+   
       quantity: {
         type: Number,
         required: true,
@@ -25,7 +21,7 @@ const orderItemShema=new mongoose.Schema({
        
      
       },
-      discountedPrice: {
+      discountPrice: {
         type: Number,
        required:true,
       

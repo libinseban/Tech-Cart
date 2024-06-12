@@ -1,30 +1,40 @@
-const Order = require('../../models/server/orderModel');
+const orderService = require('../service/orderSevice'); 
 
 const createOrder = async (req, res) => {
-    try {
-        const { products, paymentIntent, orderStatus, orderby } = req.body;
+  const user = req.user;
 
-        if (!products || !paymentIntent || !orderStatus || !orderby) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        // Create a new order
-        const newOrder = new Order({
-            products,
-            paymentIntent,
-            orderStatus,
-            orderby,
-        });
-
-        // Save the new order to the database
-        const savedOrder = await newOrder.save();
-
-        // Respond with the created order
-        return res.status(201).json({ message: 'Order created successfully', order: savedOrder });
-    } catch (error) {
-        console.error('Error processing order:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+    let createOrder = await orderService.createorder(user, req.body);
+    return res.status(201).send(createOrder);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
 };
 
-module.exports = createOrder;
+const findOrderById = async (req, res) => {
+  const user = req.user;
+
+  try {
+    let createOrder = await orderService.findOrderById(user, req.params.id); 
+    return res.status(201).send(createOrder);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
+const OrderHistory = async (req, res) => {
+  const user = req.user;
+
+  try {
+    let createOrder = await orderService.oderHistory(user._id);
+    return res.status(201).send(createOrder);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
+};
+
+module.exports = {
+  OrderHistory,
+  findOrderById,
+  createOrder,
+};

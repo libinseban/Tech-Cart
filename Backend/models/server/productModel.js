@@ -1,85 +1,65 @@
-const mongoose=require ('mongoose')
+const mongoose = require('mongoose');
 
 
-const productShema=new mongoose.Schema({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-       
-      },
-      description: {
+    },
+    description: {
         type: String,
-        required: true
-      },
-      price: {
+        required: true,
+    },
+    price: {
         type: Number,
         required: true,
-     
-      },
-      discountedPrice : {
+    },
+    discountPrice: {
         type: Number,
         required: true,
-     
-      },
-      discountPercentage: {
-        type: Number,
-       required:true,
-       
-     
-      },
-      quantity: {
+    },
+    discountPercentage: { 
         type: Number,
         required: true,
-     
-      },
-      brand:
-        {
-            type: String,
-           
-        }
-    ,
-     color:
-        {
-            type: String, 
-        }
-      , sizes: {
-        type: [Number],
-        required: true
-      },
-     
-      imageUrl:
-        {
-            type: String,
-        },
-        ratings: [{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"ratings",
-           
-          }],
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+    brand: {
+        type: String,
+        required: true,
+    },
+    color: {
+        type: String,
+        required: true,
+    },
+    imageUrl: {
+        type: String,
+        required: false,
+    },
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "rating",
+    }],
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "review",
+    }],
+    numRatings: {
+        type: Number,
+        default: 0,
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    }
+});
 
-          reviews: [{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"reviews"
-           
-          }],
-          numratings: {
-            type: Number,
-           default:0,
-         
-          },
-          category: {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"category"
-           
-          },
-          createAt:
-          {
-              type: Date,
-              default:Date.now
-          }
-      ,  
-})
+const Product = mongoose.model("Product", productSchema);
 
-const product=mongoose.model("product",productShema)
-
-module.exports=product;
+module.exports = Product;

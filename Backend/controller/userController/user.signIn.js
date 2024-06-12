@@ -1,7 +1,8 @@
-
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const genereteToken = require("../../middleware/generateToken");
+
 async function userSignInController(req, res) {
   try {
     const { email, password } = req.body;
@@ -16,25 +17,16 @@ async function userSignInController(req, res) {
       throw new Error("User not found");
     }
 
-    const checkPassword = await bcrypt.compare(password, user.password);
+    const checkPassword = await bcrypt.compare(password, user.hashPassword);
 
-    if (checkPassword) {
-      const tokenData = {
-        _id: user._id,
-        email: user.email,
-      };
-      const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-        expiresIn: "1d",
-      });
+    if (!checkPassword) {
+      return res.status(400).send("Password is incorrect");
+  }
 
-      // Send token in response
-      res.cookie("access_token", token, { httpOnly: true, secure: true }).json({
-        success: "Login Successful",
-        token: token,
-      });
-    } else {
-      throw new Error("Incorrect password");
-    }
+  const token = genereteToken(user);
+  res.cookie("token", token);
+  console.log(token);
+  res.status(200).send("Logged in!");
   } catch (error) {
     res.status(400).json({
       message: error.message || error,

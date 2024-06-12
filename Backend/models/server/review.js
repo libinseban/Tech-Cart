@@ -10,12 +10,12 @@ const reviwShema=new mongoose.Schema({
       },
       product: {
         type:mongoose.Schema.Types.ObjectId,
-        ref:"product",
+        ref:"Product",
         require:true
       },
       user: {
         type:mongoose.Schema.Types.ObjectId,
-        ref:"users",
+        ref:"User",
         require:true
       },
       createAd:{

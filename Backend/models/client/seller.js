@@ -25,7 +25,7 @@ const sellerSchema = new mongoose.Schema({
     },
     isApproved: {
         type: Boolean,
-        default: false 
+        default: true 
     },
     products: [{
         type: mongoose.Schema.Types.ObjectId,

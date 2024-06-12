@@ -53,7 +53,7 @@ const orderShema=new mongoose.Schema({
         type:Number,
         required:true
       },
-      discounte:{
+      discount:{
         type:Number,
         required:true
       },

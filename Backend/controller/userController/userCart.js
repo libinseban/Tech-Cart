@@ -1,12 +1,13 @@
-const cartService=require("../orderController/cartControl")
+const {findUserCartController,
+    addItemCartController}=require("../orderController/cartControl")
 
 const findUserCart=async(req,res)=>{
     let userId=req.user;
     
     
     try{
-        const cart=await cartService.findUserCart(userId.userId);
-        console.log("cart2",cart);
+        const cart=await findUserCartController(userId.userId);
+       
         return res.status(200).send(cart);
     }
     catch(error){
@@ -16,9 +17,9 @@ const findUserCart=async(req,res)=>{
 
 const additemCart=async(req,res)=>{
     let userId=req.user;
-    console.log(userId,"1");
+    
     try{
-        const cartItem=await cartService.addCartItem(userId, req.body)
+        const cartItem=await addItemCartController(userId, req.body)
         return res.status(200).send(cartItem);
     }
     catch(error){

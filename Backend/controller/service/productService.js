@@ -1,4 +1,4 @@
-const Category=require("../../models/cart/cardItem");
+const Category=require("../../models/cart/wishList");
 const Product=require("../../models/server/productModel");
 
 
@@ -42,12 +42,11 @@ async function createProduct(reqData){
         title:reqData.title,
         color:reqData.color,
         description:reqData.description,
-        discountedPrice:reqData.discountedPrice,
+        discountPrice:reqData.discountPrice,
         discountPercentage:reqData.discountPercentage,
         imageUrl:reqData.imageUrl,
         brand:reqData.brand,
         price: reqData.price,
-        sizes:reqData.sizes,
         quantity:reqData.quantity,
         category:thirdLevel._id,
        
@@ -77,7 +76,7 @@ async function findProductById(id){
 }
 
 async function getAllProduct(reqQuery){
-    let {category,color,sizes,maxPrice,minDiscount,sort,stock,pageNumber,pageSize}=reqQuery;
+    let {category,color,maxPrice,minDiscount,sort,stock,pageNumber,pageSize}=reqQuery;
 
     pageSize=pageSize||10;
 
@@ -107,10 +106,10 @@ async function getAllProduct(reqQuery){
 
     }
     if(minPrice && maxPrice){
-        query=await query.where("discountedPrice").item(maxPrice);
+        query=await query.where("discountPrice").item(maxPrice);
     }
     if(minDiscount){
-        query=await query.where("discountedPeersentage").get(minDiscount);
+        query=await query.where("discountPerecentage").get(minDiscount);
     }
     if(stock){
         if(stock=="in_stock"){
@@ -120,7 +119,7 @@ async function getAllProduct(reqQuery){
             query=await query.where("quantity").get(1);
         }
         if(sort){
-          const sortDirection=sort==="price_hight"?-1:1;
+          const sortDirection=sort==="price_height"?-1:1;
           query=await query.sort({discountPrice:sortDirection})
 
         }
