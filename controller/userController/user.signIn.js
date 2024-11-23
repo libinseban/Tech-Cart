@@ -33,7 +33,7 @@ async function userSignInController(req, res) {
           success: true,
           message: "Login Successful",
           role: 'admin',
-          redirectUrl: "/admin-dashboard",
+          redirectUrl: "/admin/dashboard",
           access_token:adminToken
         });
       }
