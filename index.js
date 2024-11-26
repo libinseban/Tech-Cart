@@ -21,10 +21,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
+
 
 app.use("/api/user", userRouter);
 app.use("/api/seller", seller);

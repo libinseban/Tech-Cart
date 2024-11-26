@@ -2,7 +2,6 @@ const User = require("../../models/client/userModel");
 
 const profilePicture = async (req, res) => {
     const userId = req.cookies.userId; 
-    console.log(userId, "user id");
 
     if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -18,7 +17,14 @@ const profilePicture = async (req, res) => {
             return res.status(404).json({ message: "Profile picture not found" });
         }
 
-        return res.status(200).json({ profilePic: user.profilePic });
+        const profilePicPath = req.file.path;
+        user.profilePic = profilePicPath;
+        await user.save();
+
+        return res.status(200).json({
+            profilePic: profilePicPath,
+           
+         });
     } catch (error) {
         console.error("Error fetching user profile:", error);
         return res.status(500).json({ message: "Internal server error" });

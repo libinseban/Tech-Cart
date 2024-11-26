@@ -50,25 +50,29 @@ async function userSignInController(req, res) {
         };
         const userToken = jwt.sign(tokenData, process.env.USER_SECRET_KEY, { expiresIn: "5d" });
 
-        res.cookie("userId", user._id.toString(), {
+        res.cookie("userId", user._id, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    path: '/'
+          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
         });
         res.cookie("userToken", userToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    path: '/'
+ 
         });
 
-        return res.json({
+        res.status(200).json({
           success: true,
-          message: "Login Successful",
-          role: 'user',
-          userToken
-        });
+          user: {
+              userId: user._id,
+            fistName: user.firstName,
+              lastName: user.lastName,
+            email: user.email,
+              role: user.role,
+              profilePic: user.profilePic
+          }
+      });
       }
     }
 

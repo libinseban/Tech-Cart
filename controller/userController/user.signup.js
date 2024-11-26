@@ -25,7 +25,7 @@ const userSignUpController = async (req, res) => {
             hashPassword, 
             firstName,
             lastName,
-            profilePic
+            profilePic: profilePic || null
         });
 
         const savedUser = await user.save();
@@ -38,8 +38,12 @@ const userSignUpController = async (req, res) => {
         res.cookie('userId', savedUser._id.toString(), { httpOnly: true, secure: isProduction, sameSite: 'None' });
 
         res.status(201).json({
-            id: savedUser._id,
-            data: savedUser,
+            userId: savedUser._id,
+            role: savedUser.role,
+            email: savedUser.email,
+            firstName: savedUser.firstName,
+            lastName: savedUser.lastName,
+            profilePic: savedUser.profilePic,
             success: "User Created Successfully",
             
             error: false

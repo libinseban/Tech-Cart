@@ -8,28 +8,42 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'profilePic',
+    allowed_formats: ['jpg', 'jpeg', 'png'], // specify allowed formats
+    transformation: [{ width: 500, height: 500, crop: 'limit' }] // optional image transformation
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
 
-router.use('/', (req, res, next) => {
- 
-  
+// Create middleware function
+const handleUpload = (req, res, next) => {
   upload.single('profilePic')(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: 'File upload error', error: err.message });
+      return res.status(400).json({ 
+        message: 'File upload error', 
+        error: err.message 
+      });
     } else if (err) {
-      return res.status(500).json({ message: 'Server error', error: err.message });
+      return res.status(500).json({ 
+        message: 'Server error', 
+        error: err.message 
+      });
     }
 
+    
     if (req.file) {
       req.body.profilePic = req.file.path;
     }
 
     next();
   });
-});
+};
 
+router.use('/', handleUpload);
 
 module.exports = router;
