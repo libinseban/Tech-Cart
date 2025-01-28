@@ -1,13 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "An E-Commerce Website",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "author": "",
+  "author": "Libin Seban",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
