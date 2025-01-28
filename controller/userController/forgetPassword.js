@@ -28,7 +28,7 @@ const forgetPassword = async (req, res) => {
     });
 
     const receiver = {
-      from: "Admin of E-Cart",
+      from:`"SebAttY Support" <no-reply@seb-atty.com>`,
       to: email,
       subject: "Password Reset Request",
       text: `Click on this link to generate a new password: ${process.env.FRONTEND_URL}/reset-password/${userToken}`

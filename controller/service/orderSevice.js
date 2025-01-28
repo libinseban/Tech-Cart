@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 async function sendEmail(sellerEmail, sellerName, subject, productNames, orderAddress, orderDate) {
   const mailOptions = {
-    from: process.env.ADMIN_EMAIL,
+    from: `"SebAttY Support" <no-reply@seb-atty.com>`,
     to: sellerEmail,
     subject,
     html: `
