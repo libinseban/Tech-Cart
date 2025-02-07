@@ -11,6 +11,8 @@ require("dotenv").config();
 
 const app = express();
 
+const allowedOrigins = ["https://frondend-alpha.vercel.app", "http://localhost:5173"];
+
 const corsOptions = {
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
