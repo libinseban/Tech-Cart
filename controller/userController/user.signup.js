@@ -37,7 +37,7 @@ const userSignUpController = async (req, res) => {
         res.cookie('userToken', userToken, { httpOnly: true, secure: isProduction, sameSite: 'None' });
         res.cookie('userId', savedUser._id.toString(), { httpOnly: true, secure: isProduction, sameSite: 'None' });
 
-        res.status(201).json({
+      return  res.status(201).json({
             userId: savedUser._id,
             role: savedUser.role,
             email: savedUser.email,
