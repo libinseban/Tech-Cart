@@ -19,18 +19,8 @@ const corsOptions = {
   exposedHeaders: ["set-cookie"],
 };
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || corsOptions.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions))
+;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
