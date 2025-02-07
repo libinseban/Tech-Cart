@@ -3,13 +3,11 @@ const userLogout = (req, res) => {
         res.clearCookie("userToken", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-        });
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",        });
         res.clearCookie("userId", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-        });
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",        });
 
         res.status(200).json({
             message: 'Logout successful',

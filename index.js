@@ -11,13 +11,11 @@ const app = express();
 
 const corsOptions = {
     origin: ['https://frondend-alpha.vercel.app',
-        'http://localhost:5173', 'http://localhost:5174'],
+        'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    exposedHeaders: ['set-cookie'],
-    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    secure: process.env.NODE_ENV === 'production'
+    exposedHeaders: ['set-cookie']
 };
 
 app.use(cors(corsOptions));
