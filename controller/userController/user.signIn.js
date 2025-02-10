@@ -59,12 +59,12 @@ async function userSignInController(req, res) {
         });
 
         res.cookie("userId", user._id, {
-          httpOnly: false,
+          httpOnly: true,
           secure: process.env.NODE_ENV === "production", 
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
         });
         res.cookie("userToken", userToken, {
-          httpOnly: false,
+          httpOnly: true,
           secure: process.env.NODE_ENV === "production",  
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
                 });
