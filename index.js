@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const connectDb = require("./config/db");
 const userRouter = require("./routes/main/user");
@@ -11,20 +9,26 @@ require("dotenv").config();
 
 const app = express();
 
-const allowedOrigins = ["https://frondend-alpha.vercel.app", "http://localhost:5173"];
-
 const corsOptions = {
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, origin);
+      const developmentOrigins = [
+        "http://localhost:5173", 
+        "http://localhost:5175", 
+        "https://frontend-chi-ashy-91.vercel.app"
+      ];
+      
+      if (!origin || developmentOrigins.includes(origin)) {
+        callback(null, true);
       } else {
-        callback(null, false); 
-    }
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     exposedHeaders: ["set-cookie"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
   
 app.use(cors(corsOptions))
