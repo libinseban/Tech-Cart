@@ -71,6 +71,7 @@ async function userSignInController(req, res) {
 
         return res.status(200).json({
           success: true,
+          token: userToken,
           user: {
             userId: user._id,
             fistName: user.firstName,
