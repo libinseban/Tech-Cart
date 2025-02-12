@@ -58,23 +58,28 @@ async function userSignInController(req, res) {
           expiresIn: "5d",
         });
 
-        res.cookie("userId", user._id, {
-          httpOnly: true,
+        res.cookie("userId", user._id.toString(), {
+          httpOnly: false, 
           secure: process.env.NODE_ENV === "production", 
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          maxAge: 5 * 24 * 60 * 60 * 1000, 
+          path: '/'
         });
+        
         res.cookie("userToken", userToken, {
-          httpOnly: true,
+          httpOnly: false, 
           secure: process.env.NODE_ENV === "production",  
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-                });
+          maxAge: 5 * 24 * 60 * 60 * 1000, 
+          path: '/'
+        });
 
         return res.status(200).json({
           success: true,
           token: userToken,
           user: {
-            userId: user._id,
-            fistName: user.firstName,
+            userId: user._id.toString(),
+            firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             role: user.role,

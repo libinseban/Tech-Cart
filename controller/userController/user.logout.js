@@ -1,17 +1,34 @@
 const userLogout = (req, res) => {
     try {
-        res.clearCookie("userToken", {
+        // Standardized cookie clear options
+        const cookieClearOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",        });
-        res.clearCookie("userId", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",        });
+            sameSite: 'Lax',
+            path: '/',
+            domain: process.env.NODE_ENV === "production" 
+                ? ".tech-cart.onrender.com" 
+                : "localhost"
+        };
+
+        // Clear specific cookies with consistent options
+        res.clearCookie("userToken", cookieClearOptions);
+        res.clearCookie("userId", cookieClearOptions);
+
+        // Additional fallback for different environments
+        res.clearCookie("userToken", { 
+            ...cookieClearOptions, 
+            domain: undefined 
+        });
+        res.clearCookie("userId", { 
+            ...cookieClearOptions, 
+            domain: undefined 
+        });
 
         res.status(200).json({
             message: 'Logout successful',
-            redirectUrl: "/login" 
+            redirectUrl: "/login",
+            success: true
         });
     } catch (error) {
         console.error("Logout error:", error);
