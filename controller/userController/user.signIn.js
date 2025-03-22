@@ -59,7 +59,7 @@ async function userSignInController(req, res) {
         });
 
         res.cookie("userId", user._id.toString(), {
-          httpOnly: false, 
+          httpOnly: true, 
           secure: process.env.NODE_ENV === "production", 
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
           maxAge: 5 * 24 * 60 * 60 * 1000, 
@@ -67,7 +67,7 @@ async function userSignInController(req, res) {
         });
         
         res.cookie("userToken", userToken, {
-          httpOnly: false, 
+          httpOnly: true, 
           secure: process.env.NODE_ENV === "production",  
           sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
           maxAge: 5 * 24 * 60 * 60 * 1000, 

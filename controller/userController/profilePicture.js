@@ -1,5 +1,5 @@
 const User = require("../../models/client/userModel");
-
+const path = require("path")
 const profilePicture = async (req, res) => {
     const userId = req.cookies.userId; 
 
@@ -17,12 +17,10 @@ const profilePicture = async (req, res) => {
             return res.status(404).json({ message: "Profile picture not found" });
         }
 
-        const profilePicPath = req.file.path;
-        user.profilePic = profilePicPath;
-        await user.save();
+       
 
         return res.status(200).json({
-            profilePic: profilePicPath,
+           user
            
          });
     } catch (error) {

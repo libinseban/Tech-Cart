@@ -8,8 +8,8 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'profilePic',
-    allowed_formats: ['jpg', 'jpeg', 'png'], // specify allowed formats
-    transformation: [{ width: 500, height: 500, crop: 'limit' }] // optional image transformation
+    allowed_formats: ['jpg', 'jpeg', 'png'], 
+    transformation: [{ width: 500, height: 500, crop: 'limit' }] 
   },
 });
 
