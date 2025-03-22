@@ -47,7 +47,7 @@ async function findUserCart(userId) {
 
         return {
           product: {
-            _id: product._id,
+            productId: product._id,
             title: product.title,
             price: product.price,
             discountPrice: product.discountPrice,
