@@ -1,4 +1,4 @@
-const Seller = require("../../routes/models/client/seller");
+const Seller = require("../../models/client/seller");
 const bcrypt = require("bcryptjs");
 
 const sellerSignUp = async (req, res) => {

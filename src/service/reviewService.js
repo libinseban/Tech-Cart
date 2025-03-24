@@ -1,5 +1,5 @@
-const Reviews = require("../routes/models/server/review");
-const Product = require("../routes/models/server/productModel");
+const Reviews = require("../models/server/review");
+const Product = require("../models/server/productModel");
 
 async function createReview(productId, userId,reviewByUser) {
   const product = await Product.findById(productId).populate('review');

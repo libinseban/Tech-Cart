@@ -1,10 +1,10 @@
 const express = require("express");
 const userRouter = express.Router();
-const userSignUpController = require("../../../controller/userController/user.signup");
-const userSignInController = require("../../../controller/userController/user.signIn");
-const userLogout = require("../../../controller/userController/user.logout");
+const userSignUpController = require("../../controller/userController/user.signup");
+const userSignInController = require("../../controller/userController/user.signIn");
+const userLogout = require("../../controller/userController/user.logout");
 const uploadImage = require("../other/uploadImage");
-const authenticate = require("../../../middleware/authToken");
+const authenticate = require("../../middleware/authToken");
 const { newOrder, OrderHistory, findOrderById,} = require("../../helper/orderFunctions/orderController");
 const {
   moveProductToCart, removeWishList, updateWishList, getWishlist, getWishlistProduct
@@ -18,12 +18,12 @@ const {
 const {
   forgetPassword,
   resetPassword
-} = require("../../../controller/userController/forgetPassword");
+} = require("../../controller/userController/forgetPassword");
 const ratingController = require('../../helper/productHelper/ratingController')
 const reviewController=require('../../helper/productHelper/reviewController')
 const {getAllProducts} = require("../../helper/productHelper/productControl");
 const { cancelOrder } = require("../../service/orderSevice");
-const {profilePicture} =require("../../../controller/userController/profilePicture")
+const {profilePicture} =require("../../controller/userController/profilePicture")
 const { submitContact } = require("../../helper/orderFunctions/contactController");
 
 userRouter.post("/signup",uploadImage, userSignUpController);

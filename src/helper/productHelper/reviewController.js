@@ -1,5 +1,5 @@
 const ReviewServices = require("../../service/reviewService");
-const Reviews = require("../../routes/models/server/review")
+const Reviews = require("../../models/server/review")
 
 
 const createReview = async (req, res) => {

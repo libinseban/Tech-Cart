@@ -1,9 +1,7 @@
-/** @format */
 
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { CreateCart } = require("../service/cartService");
 
 const userSignUpController = async (req, res) => {
   try {

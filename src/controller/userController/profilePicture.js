@@ -1,4 +1,4 @@
-const User = require("../../routes/models/client/userModel");
+const User = require("../../models/client/userModel");
 const path = require("path")
 const profilePicture = async (req, res) => {
     const userId = req.cookies.userId; 

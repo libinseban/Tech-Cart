@@ -1,8 +1,7 @@
-/** @format */
 
-const Cart = require("../../models/cart/cartModel");
-const Products = require("../../models/server/productModel");
-const CartItem = require("../../models/cart/cartItem");
+const Cart = require("../models/cart/cartModel");
+const Products = require("../models/server/productModel");
+const CartItem = require("../models/cart/cartItem");
 
 async function CreateCart(userId) {
   try {
