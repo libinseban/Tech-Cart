@@ -20,7 +20,8 @@ const corsOptions = {
       if (!origin || developmentOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        console.error(`Blocked by CORS: ${origin}`);
+        callback(null, false);
       }
     },
     credentials: true,
