@@ -1,6 +1,6 @@
 const Order = require("../../routes/models/server/orderModel");
 const Product = require("../../routes/models/server/productModel");
-const sendCancellationEmail = require("../orderController/sendCancellationEmail");
+const sendCancellationEmail = require("../../helper/orderFunctions/sendCancellationEmail");
 
 const getSellerProducts = async (sellerId) => {
   return await Product.find({ seller: sellerId }).select("_id").lean();

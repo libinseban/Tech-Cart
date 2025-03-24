@@ -5,26 +5,27 @@ const userSignInController = require("../../../controller/userController/user.si
 const userLogout = require("../../../controller/userController/user.logout");
 const uploadImage = require("../other/uploadImage");
 const authenticate = require("../../../middleware/authToken");
-const { newOrder, OrderHistory, findOrderById,} = require("../../../controller/orderController/orderController");
+const { newOrder, OrderHistory, findOrderById,} = require("../../helper/orderFunctions/orderController");
 const {
   moveProductToCart, removeWishList, updateWishList, getWishlist, getWishlistProduct
-} = require("../../../controller/productController/wishListController");
+} = require("../../helper/productHelper/wishListController");
 const {
   findUserCartController,
   removeItemCartController,
   addItemCartController,
   findUserCartById,
-} = require("../../../controller/productController/cartControl");
+} = require("../../helper/productHelper/cartControl");
 const {
   forgetPassword,
   resetPassword
 } = require("../../../controller/userController/forgetPassword");
-const ratingController = require('../../../controller/productController/ratingController')
-const reviewController=require('../../../controller/productController/reviewController')
-const {getAllProducts} = require("../../../controller/productController/productControl");
-const { cancelOrder } = require("../../../controller/service/orderSevice");
+const ratingController = require('../../helper/productHelper/ratingController')
+const reviewController=require('../../helper/productHelper/reviewController')
+const {getAllProducts} = require("../../helper/productHelper/productControl");
+const { cancelOrder } = require("../../service/orderSevice");
 const {profilePicture} =require("../../../controller/userController/profilePicture")
-const {submitContact} = require("../../../controller/orderController/contactController");
+const { submitContact } = require("../../helper/orderFunctions/contactController");
+
 userRouter.post("/signup",uploadImage, userSignUpController);
 userRouter.post("/signin", userSignInController);
 userRouter.post("/forget-password", forgetPassword);

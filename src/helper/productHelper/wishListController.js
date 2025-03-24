@@ -3,7 +3,7 @@ const wishList = require("../../models/cart/wishList");
 const Product = require("../../models/server/productModel"); 
 const Cart=require('../../models/cart/cartModel')
 const CartItem = require('../../models/cart/cartItem');
-const { addCartItem } = require('../service/cartService');
+const { addCartItem } = require('../../service/cartService');
 const ObjectId = mongoose.Types.ObjectId;
 
 const updateWishList = async (req, res) => {

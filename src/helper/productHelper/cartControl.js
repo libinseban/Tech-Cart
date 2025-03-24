@@ -1,5 +1,5 @@
 
-const { findUserCart, addCartItem,removeCartItem } = require("../service/cartService");
+const { findUserCart, addCartItem,removeCartItem } = require("../../service/cartService");
 const CartItem = require("../../models/cart/cartItem");
 const { default: mongoose } = require("mongoose");
 const Cart = require("../../models/cart/cartModel");
