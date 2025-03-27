@@ -4,7 +4,7 @@ const User = require('../models/client/userModel');
 const Cart = require("../models/cart/cartModel");
 const Seller = require("../models/client/seller");
 const nodemailer = require('nodemailer');
-const Product = require("../models/server/productModel");
+const Product = require("../models/home/productModel");
 const Razorpay = require('razorpay');
 require('dotenv').config();
 
@@ -176,7 +176,7 @@ await updateResult.save()
     
 
     return {
-      message: 'Order placed successfully, awaiting payment',
+      message: 'Order placed successfully',
       order,
       razorpayOrderId: razorpayOrder.id, 
       amount: price,               

@@ -9,12 +9,16 @@ const productController = require('../../helper/productHelper/productControl');
 const approveSellers=require("../other/control")
 const productImage = require("../other/productImage")
 const authToken = require("../../middleware/authToken")
+const adminDetails = require("../../test/admin/adminDetails")
+const editAdmin =require("../../test/admin/editAdminProfile")
 
 adminRouter.post("/signup",adminSignUp)
 adminRouter.post("/signin", adminSignIn)
 adminRouter.post("/logout", adminLogout)
 
-adminRouter.use('/upload', adminToken,productImage)
+adminRouter.use('/upload', adminToken, productImage)
+adminRouter.get("/profile", adminToken, adminDetails)
+adminRouter.put("/edit/profile",adminToken,editAdmin)
 
 adminRouter.post('/product', adminToken,productImage, productController.createProduct);
 adminRouter.get('/products/:productId', adminToken, productController.findProductById);
@@ -27,7 +31,7 @@ adminRouter.get('/getOrders',adminToken, OrderController.getAllOrders);
 adminRouter.put("/confirmOrder/:orderId",adminToken,OrderController.confirmOrders);
 adminRouter.put("/shippingOrders/:orderId",adminToken,OrderController.shippingOrders);
 adminRouter.put("/deliver/:orderId",adminToken,OrderController.deliverOrders);
-adminRouter.put("/cancelledOrder/:orderId",adminToken,OrderController.cancelledOrders);
+adminRouter.put("/cancelOrder/:orderId",adminToken,OrderController.cancelledOrders);
 adminRouter.put("/deleteOrder/:orderId", adminToken, OrderController.deleteOrders);
 adminRouter.use("/approveSellers",authToken,approveSellers)
 

@@ -14,7 +14,7 @@ const adminSignIn = async (req, res) => {
 
         let admin = await adminModel.findOne({email: adminEmail});
         if (email != admin.email) {
-            return res.status(401).json({ message: 'Admin not found.. ' });
+            return res.status(404).json({ message: 'Admin not found.. ' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, admin.password);
@@ -31,14 +31,19 @@ const adminSignIn = async (req, res) => {
                 email: admin.email,
             };
             const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-                expiresIn: "1d",
+                expiresIn: "7d",
             });
           
-res.cookie("access_token", token, { httpOnly: true, secure: true }).json({
-    success: "Login Successful",
-    token: token,
-    redirectUrl: "/adminDashboard" 
-});
+            return res
+            .cookie("access_token", token, { httpOnly: true, secure: true })
+            .cookie("adminId", admin._id.toString(), { httpOnly: true, secure: true })
+            .json({
+                success: true,
+                message: "Login Successful",
+                token,
+                admin,
+                redirectUrl: "/adminDashboard"
+            });
 
         }
       

@@ -1,5 +1,5 @@
 const Order = require("../../models/server/orderModel");
-const Product = require("../../models/server/productModel");
+const Product = require("../../models/home/productModel");
 const sendCancellationEmail = require("../../helper/orderFunctions/sendCancellationEmail");
 
 const getSellerProducts = async (sellerId) => {

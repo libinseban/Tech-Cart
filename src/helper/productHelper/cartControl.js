@@ -52,17 +52,24 @@ const removeItemCartController = async (req, res) => {
 };
 
 const findUserCartById = async (req, res) => {
-const userId=req.cookies.userId
-
+  const userId = req.cookies.userId
+  const {productId}=req.params
 
   try {
-    const cartItems = await findUserCart(userId);
-    
-    if (!cartItems || (cartItems.products && cartItems.products.length === 0)) {
-      return res.status(200).json({ message: "Cart is empty", cartItems: [] });
-    }
 
-    res.status(200).json({ cartItems });
+   
+   const existingCartItem = await CartItem.findOne({
+       user: userId,
+       product: productId,
+     });
+ 
+    
+          if (!existingCartItem) {
+            return res.status(200).json({ message: "Cart is empty", cartItems: [] });
+          }
+
+  
+      return res.status(200).json({ message: "Product found in cart",  existingCartItem });
   } catch (error) {
     console.error("Error finding product in cart:", error);
     return res.status(500).send({ error: error.message });

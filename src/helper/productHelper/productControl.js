@@ -1,6 +1,6 @@
 
 const Category = require("../../models/cart/category");
-const Product = require("../../models/server/productModel");
+const Product = require("../../models/home/productModel");
 
 const createProduct = async (req, res) => {
   const {
@@ -193,7 +193,6 @@ const getAllProducts = async (req, res) => {
     const products = await Product.find(filter).populate("category");
     console.log("Fetched products:", products);
 
-    // Optionally return an empty array instead of a 404
     return res.status(200).json(products.length ? products : []);
   } catch (error) {
     console.error("Error fetching products:", error);

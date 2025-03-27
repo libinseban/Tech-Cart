@@ -13,9 +13,9 @@ const userShema=new mongoose.Schema({
         trim: true
        
   },
-  profilePic: { 
+  profilePic: [{ 
     type: String,
-  },
+  }],
   
       hashPassword: {
         type: String,

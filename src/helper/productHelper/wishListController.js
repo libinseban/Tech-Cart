@@ -2,7 +2,7 @@
 
 const mongoose = require("mongoose");
 const wishList = require("../../models/cart/wishList");
-const Product = require("../../models/server/productModel");
+const Product = require("../../models/home/productModel");
 const Cart = require("../../models/cart/cartModel");
 const CartItem = require("../../models/cart/cartItem");
 const { addCartItem } = require("../../service/cartService");
@@ -31,18 +31,16 @@ const updateWishList = async (req, res) => {
       const existingProduct = wishlist.wishlistItems.find((item) =>
         item.product.equals(productId)
       );
+    
       if (existingProduct) {
-        existingProduct.quantity += 1;
-      } else {
-        wishlist.wishlistItems.push({ product: productId, quantity: 1 });
+        return res.status(409).send({ message: "Product already in wishlist" });
       }
+
+      wishlist.wishlistItems.push({ product: productId, quantity: 1 });
     }
 
     await wishlist.save();
-
-    return res
-      .status(200)
-      .send({ message: "Product added to wishlist", wishlist });
+    return res.status(200).send({ message: "Product added to wishlist", wishlist });
   } catch (error) {
     console.error("Error adding product to wishlist:", error);
     return res
@@ -69,26 +67,12 @@ const removeWishList = async (req, res) => {
       item.product.equals(productId)
     );
 
-    if (!existingProduct) {
-      return res.status(404).send({ error: "Product not found in wishlist." });
-    }
+    await wishList.updateOne(
+      { user: userId },
+      { $pull: { wishlistItems: { product: productId } } }
+    );
 
-    existingProduct.quantity -= 1;
-
-    if (existingProduct.quantity <= 0) {
-      wishlist.wishlistItems = wishlist.wishlistItems.filter(
-        (item) => !item.product.equals(productId)
-      );
-    }
-
-    await wishlist.save();
-
-    return res
-      .status(200)
-      .send({
-        message: "Product quantity decreased successfully",
-        updatedWishlist: wishlist,
-      });
+    return res.status(200).send({ message: "Product removed from wishlist." });
   } catch (error) {
     console.error("Error removing wishlist item:", error);
     return res
@@ -102,7 +86,7 @@ const getWishlist = async (req, res) => {
   try {
     const wishlist = await wishList
       .findOne({ user: userId })
-      .populate("products.product");
+      .populate("wishlistItems.product");
 
     if (wishlist) {
       const productDetails = wishlist.wishlistItems.map((item) => ({
@@ -133,6 +117,13 @@ const getWishlistProduct = async (req, res) => {
   const userId = req.cookies.userId;
   const { productId } = req.params;
 
+  if (
+    !mongoose.Types.ObjectId.isValid(productId) ||
+    !mongoose.Types.ObjectId.isValid(userId)
+  ) {
+    return res.status(400).send({ error: "Invalid productId or userId" });
+  }
+
   try {
     const wishlist = await wishList
       .findOne({ user: userId })
@@ -144,7 +135,7 @@ const getWishlistProduct = async (req, res) => {
     }
 
     const product = wishlist.wishlistItems.find(
-      (item) => item.product.toString() === productId
+      (item) => String(item.product._id) === productId
     );
 
     if (!product) {

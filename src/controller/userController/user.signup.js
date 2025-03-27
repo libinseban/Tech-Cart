@@ -1,3 +1,4 @@
+/** @format */
 
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
@@ -5,26 +6,28 @@ const jwt = require("jsonwebtoken");
 
 const userSignUpController = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, profilePic } = req.body;
+    const { email, password, firstName, lastName } = req.body;
+    const profilePic = req.body.profilePic || null;
+
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ message: "Please fill out all fields", error: true });
+    }
 
     const findUser = await userModel.findOne({ email });
     if (findUser) {
-      return res.status(409).json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists", error: true });
     }
 
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ message: "Please fill out all fields" });
-    }
-
-    const salt = bcrypt.genSaltSync(10);
-    const hashPassword = bcrypt.hashSync(password, salt);
+    // Hash password asynchronously
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = new userModel({
       email,
-      hashPassword,
+      password: hashedPassword, 
       firstName,
       lastName,
-      profilePic: profilePic || null,
+      profilePic:profilePic,
     });
 
     const savedUser = await user.save();
@@ -32,7 +35,7 @@ const userSignUpController = async (req, res) => {
     const userToken = jwt.sign(
       { id: savedUser._id },
       process.env.USER_SECRET_KEY,
-      { expiresIn: "7 days" }
+      { expiresIn: "7d" }
     );
 
     res.cookie("userToken", userToken, {
@@ -53,17 +56,18 @@ const userSignUpController = async (req, res) => {
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       profilePic: savedUser.profilePic,
-      success: "User Created Successfully",
-
+      message: "User Created Successfully",
+      success: true,
       error: false,
     });
 
-    console.log("User created successfully", savedUser);
   } catch (error) {
     console.error("Error in user sign-up:", error);
-    res
-      .status(500)
-      .json({ message: error.message, error: true, success: false });
+    return res.status(500).json({
+      message: "Internal server error",
+      error: true,
+      success: false,
+    });
   }
 };
 

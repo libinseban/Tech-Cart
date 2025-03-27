@@ -8,7 +8,10 @@ async function getAllOrders(req, res) {
       .populate({ path: 'products', select: 'title price' })
       .lean();
 
-    return res.status(200).json({ success: true, orders });
+    return res.status(200).json({
+      message: "Orders retrieved successfully",
+      success: true, orders
+    });
   } catch (error) {
     console.error("Error retrieving all orders:", error);
     return res.status(500).json({ error: "Failed to retrieve orders." });
@@ -19,7 +22,7 @@ const confirmOrders = async (req, res) => {
   const orderId = req.params.orderId;
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: "CONFIRMED" }, { new: true });
-    return res.status(200).json({ success: true, updatedOrder });
+    return res.status(200).json({ message:"Order confirmed successfully",success: true, updatedOrder });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -29,7 +32,7 @@ const shippingOrders = async (req, res) => {
   const orderId = req.params.orderId;
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: "SHIPPED" }, { new: true });
-    return res.status(200).json({ success: true, updatedOrder });
+    return res.status(200).json({ message:"Order shipped successfully",success: true, updatedOrder });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -39,7 +42,7 @@ const deliverOrders = async (req, res) => {
   const orderId = req.params.orderId;
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: "DELIVERED" }, { new: true });
-    return res.status(200).json({ success: true, updatedOrder });
+    return res.status(200).json({message:"Order delivered successfully", success: true, updatedOrder });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -49,7 +52,7 @@ const cancelledOrders = async (req, res) => {
   const orderId = req.params.orderId;
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: "CANCELLED" }, { new: true });
-    return res.status(200).json({ success: true, updatedOrder });
+    return res.status(200).json({message:"Order cancelled successfully", success: true, updatedOrder });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -62,7 +65,7 @@ const deleteOrders = async (req, res) => {
     if (!deletedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
-    return res.status(200).json({ success: true, message: 'Order deleted successfully.' });
+    return res.status(200).json({message:"Order deleted successfully.", success: true });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

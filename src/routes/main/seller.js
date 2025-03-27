@@ -7,12 +7,17 @@ const productImage = require("../other/productImage");
 const sellerVerify = require("../../middleware/sellerVerify");
 const { forgetPassword, resetPassword } = require("../../controller/sellerController/resetPassword");
 const SellerController = require("../../controller/sellerController/sellerOrderControl")
+const editSellerProfile=require("../../test/sellers/editSellerProfile")
+const getSellerProfile=require("../../test/sellers/getSellerProfile")
+
 
 seller.post("/signup", sellerSignUp)
 seller.post("/signin", sellerSignIn)
 seller.post("/logout", sellerLogout)
 seller.post("/forget-password", forgetPassword); 
 seller.post('/reset-password/:sellerToken', resetPassword);
+seller.get("/profile", sellerVerify ,getSellerProfile)
+seller.put("/edit/profile", sellerVerify, editSellerProfile)
 
 seller.post('/createProduct',sellerVerify,productImage,productController.createProduct);
 seller.post('MultipleProducts/creates', sellerVerify,productController.createMultipleProducts);

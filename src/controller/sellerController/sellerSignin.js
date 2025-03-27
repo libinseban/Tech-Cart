@@ -55,7 +55,8 @@ const sellerSignIn = async (req, res) => {
       seller: {
         _id: seller._id,
         email: seller.email,
-        name: seller.name
+        name: seller.name,
+        address:seller.address
       }
     });
 

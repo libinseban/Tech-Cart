@@ -13,8 +13,8 @@ const profilePicture = async (req, res) => {
             return res.status(404).json({ message: "User  not found" });
         }
 
-        if (!user.profilePic) {
-            return res.status(404).json({ message: "Profile picture not found" });
+        if (!user.profilePic||user) {
+            return res.status(404).json({ message: "Profile picture not found",  user });
         }
 
        
