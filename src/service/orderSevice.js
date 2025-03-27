@@ -1,10 +1,10 @@
-const Address = require("../models/server/addressModel");
-const Order = require("../models/server/orderModel");
+const Address = require("../models/others/addressModel");
+const Order = require("../models/others/orderModel");
 const User = require('../models/client/userModel');
 const Cart = require("../models/cart/cartModel");
 const Seller = require("../models/client/seller");
 const nodemailer = require('nodemailer');
-const Product = require("../models/home/productModel");
+const Product = require("../models/product/productModel");
 const Razorpay = require('razorpay');
 require('dotenv').config();
 

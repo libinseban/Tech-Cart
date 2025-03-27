@@ -4,40 +4,40 @@ const userRouter = express.Router();
 const userSignUpController = require("../../controller/userController/user.signup");
 const userSignInController = require("../../controller/userController/user.signIn");
 const userLogout = require("../../controller/userController/user.logout");
-const uploadImage = require("../other/uploadImage");
+const uploadImage = require("../image/uploadImage");
 const authenticate = require("../../middleware/authToken");
 const {
   newOrder,
   OrderHistory,
   findOrderById,
-} = require("../../helper/orderFunctions/orderController");
+} = require("../../controller/elements/orderController");
 const {
   moveProductToCart,
   removeWishList,
   updateWishList,
   getWishlist,
   getWishlistProduct,
-} = require("../../helper/productHelper/wishListController");
+} = require("../../validators/wishlist");
 const {
   findUserCartController,
   removeItemCartController,
   addItemCartController,
   findUserCartById,
-} = require("../../helper/productHelper/cartControl");
+} = require("../../controller/elements/cartControl");
 const {
   forgetPassword,
   resetPassword,
 } = require("../../controller/userController/forgetPassword");
-const ratingController = require("../../helper/productHelper/ratingController");
-const reviewController = require("../../helper/productHelper/reviewController");
-const { getAllProducts } = require("../../helper/productHelper/productControl");
+const ratingController = require("../../validators/rating");
+const reviewController = require("../../validators/review");
+const { getAllProducts } = require("../../controller/elements/productControl");
 const { cancelOrder } = require("../../service/orderSevice");
 const {
   profilePicture,
 } = require("../../test/users/userDetails");
 const {
   submitContact,
-} = require("../../helper/orderFunctions/contactController");
+} = require("../../helper/contactController");
 const editUserProfile = require("../../test/users/editUserProfile");
 
 userRouter.post("/signup", uploadImage, userSignUpController);

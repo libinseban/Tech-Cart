@@ -1,6 +1,6 @@
-const Order = require("../../models/server/orderModel");
-const Product = require("../../models/home/productModel");
-const sendCancellationEmail = require("../../helper/orderFunctions/sendCancellationEmail");
+const Order = require("../../models/others/orderModel");
+const Product = require("../../models/product/productModel");
+const sendCancellationEmail = require("../../helper/sendCancellationEmail");
 
 const getSellerProducts = async (sellerId) => {
   return await Product.find({ seller: sellerId }).select("_id").lean();

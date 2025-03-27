@@ -1,5 +1,5 @@
-const Rating = require('../models/home/ratingModel.js');
-const Product = require('../models/home/productModel.js');
+const Rating = require('../models/product/ratingModel.js');
+const Product = require('../models/product/productModel.js');
 
 async function createRating(productId, userId,ratingNumber) {
   const product = await Product.findById(productId).populate('rating');

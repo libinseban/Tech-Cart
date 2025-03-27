@@ -1,11 +1,11 @@
 /** @format */
 
 const mongoose = require("mongoose");
-const wishList = require("../../models/cart/wishList");
-const Product = require("../../models/home/productModel");
-const Cart = require("../../models/cart/cartModel");
-const CartItem = require("../../models/cart/cartItem");
-const { addCartItem } = require("../../service/cartService");
+const wishList = require("../models/cart/wishList");
+const Product = require("../models/product/productModel");
+const Cart = require("../models/cart/cartModel");
+const CartItem = require("../models/cart/cartItem");
+const { addCartItem } = require("../service/cartService");
 const ObjectId = mongoose.Types.ObjectId;
 
 const updateWishList = async (req, res) => {

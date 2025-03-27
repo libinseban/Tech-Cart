@@ -1,12 +1,12 @@
 const seller = require("express").Router()
-const sellerSignIn = require('../../controller/sellerController/sellerSignin')
-const sellerSignUp  = require('../../controller/sellerController/sellerSignup')
-const  sellerLogout  = require('../../controller/sellerController/sellerLogout')
-const productController=require('../../controller/sellerController/sellerControl');
-const productImage = require("../other/productImage");
+const sellerSignIn = require('../../controller/sellerControllers/sellerSignin')
+const sellerSignUp  = require('../../controller/sellerControllers/sellerSignup')
+const  sellerLogout  = require('../../controller/sellerControllers/sellerLogout')
+const productController=require('../../controller/sellerControllers/sellerControl');
+const productImage = require("../image/productImage");
 const sellerVerify = require("../../middleware/sellerVerify");
-const { forgetPassword, resetPassword } = require("../../controller/sellerController/resetPassword");
-const SellerController = require("../../controller/sellerController/sellerOrderControl")
+const { forgetPassword, resetPassword } = require("../../controller/sellerControllers/sellerPasswordReset");
+const SellerController = require("../../controller/sellerControllers/sellerOrderControl")
 const editSellerProfile=require("../../test/sellers/editSellerProfile")
 const getSellerProfile=require("../../test/sellers/getSellerProfile")
 

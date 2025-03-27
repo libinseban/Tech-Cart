@@ -2,8 +2,8 @@
 
 const mongoose = require("mongoose");
 const Seller = require("../../models/client/seller");
-const Product = require("../../models/home/productModel");
-const Category = require("../../models/cart/category");
+const Product = require("../../models/product/productModel");
+const Category = require("../../models/product/category");
 
 const createProduct = async (req, res) => {
   const {
