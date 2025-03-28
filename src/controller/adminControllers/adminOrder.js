@@ -38,7 +38,7 @@ const shippingOrders = async (req, res) => {
   }
 };
 
-const deliverOrders = async (req, res) => {
+const deliveryOrders = async (req, res) => {
   const orderId = req.params.orderId;
   try {
     const updatedOrder = await Order.findByIdAndUpdate(orderId, { orderStatus: "DELIVERED" }, { new: true });
@@ -59,9 +59,8 @@ const cancelledOrders = async (req, res) => {
 };
 
 const deleteOrders = async (req, res) => {
-  const orderId = req.params.orderId;
   try {
-    const deletedOrder = await Order.findByIdAndDelete(orderId);
+    const deletedOrder = await Order.find();
     if (!deletedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
@@ -75,7 +74,7 @@ module.exports = {
   getAllOrders,
   confirmOrders,
   shippingOrders,
-  deliverOrders,
+  deliveryOrders,
   cancelledOrders,
   deleteOrders,
 };
