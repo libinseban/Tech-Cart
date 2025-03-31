@@ -9,47 +9,59 @@ require("dotenv").config();
 
 const app = express();
 
+
+// Environment-specific configuration for origins
+const allowedOrigins = [
+    "http://localhost:5173", 
+    "http://localhost:5175", 
+    "https://frontend-chi-ashy-91.vercel.app"
+];
+
+// CORS options
 const corsOptions = {
-    origin: function (origin, callback) {
-      const developmentOrigins = [
-        "http://localhost:5173", 
-        "http://localhost:5175", 
-        "https://frontend-chi-ashy-91.vercel.app"
-      ];
-      
-      if (!origin || developmentOrigins.includes(origin)) {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) { 
         callback(null, true);
-      } else {
+    } else {
         console.error(`Blocked by CORS: ${origin}`);
-        callback(null, false);
-      }
-    },
+        callback(new Error("Not allowed by CORS"));
+    }
+}
+,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE","OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     exposedHeaders: ["set-cookie"],
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204 
 };
-  
-app.options("*", cors(corsOptions)); 
 
+app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes
 app.use("/api/user", userRouter);
 app.use("/api/seller", seller);
 app.use("/api/admin", adminRouter);
 
+// Base route
 app.get("/", (req, res) => {
-  res.json("home page");
+    res.json("home page");
+});
+
+// Test CORS endpoint
+app.get("/test-cors", (req, res) => {
+    res.json({ message: "CORS is working!" });
 });
 
 const PORT = process.env.PORT;
+
+// Database connection and server start
 connectDb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running at ${PORT}`);
-  });
+    app.listen(PORT, () => {
+        console.log(`Server running at ${PORT}`);
+    });
 });

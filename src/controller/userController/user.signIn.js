@@ -17,9 +17,13 @@ async function userSignInController(req, res) {
 
     // Check if admin exists
     const admin = await Admin.findOne({ email });
+    if (!admin || !admin.password) {
+      return res.status(400).json({ message: "Invalid admin credentials", success: false });
+    }
+    
     if (admin) {
-      const isPasswordMatch = await bcrypt.compare(password, admin.password);
-      if (isPasswordMatch) {
+      const checkAdmin = await bcrypt.compare(password, admin.password);
+      if (checkAdmin) {
         const tokenData = {
           _id: admin._id,
           email: admin.email,
@@ -46,9 +50,12 @@ async function userSignInController(req, res) {
     }
 
     const user = await userModel.findOne({ email });
+    if (!user || !user.password) {
+      return res.status(400).json({ message: "Invalid admin credentials", success: false });
+    }
     if (user) {
-      const isPasswordMatch = await bcrypt.compare(password, user.hashPassword);
-      if (isPasswordMatch) {
+      const checkUser = await bcrypt.compare(password, user.hashPassword);
+      if (checkUser) {
         const tokenData = {
           _id: user._id,
           email: user.email,
