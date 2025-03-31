@@ -1,5 +1,3 @@
-/** @format */
-
 const userModel = require("../../models/client/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -10,17 +8,63 @@ async function userSignInController(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email and password", success: false });
+      return res.status(400).json({
+        message: "Please provide email and password",
+        success: false,
+      });
     }
 
-    // Check if admin exists
-    const admin = await Admin.findOne({ email });
-    if (!admin || !admin.password) {
-      return res.status(400).json({ message: "Invalid admin credentials", success: false });
+    // Check if user exists first
+    const user = await userModel.findOne({ email });
+    if (user) {
+      const checkUser = await bcrypt.compare(password, user.password);
+      if (checkUser) {
+        const tokenData = {
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+        };
+        const userToken = jwt.sign(tokenData, process.env.USER_SECRET_KEY, {
+          expiresIn: "5d",
+        });
+
+        res.cookie("userId", user._id.toString(), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          maxAge: 5 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.cookie("userToken", userToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          maxAge: 5 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+
+        return res.status(200).json({
+          success: true,
+          token: userToken,
+          user: {
+            userId: user._id.toString(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            profilePic: user.profilePic,
+          },
+        });
+      }
+      return res.status(400).json({
+        message: "Email or password is incorrect",
+        success: false,
+      });
     }
-    
+
+    // If user doesn't exist, check for admin
+    const admin = await Admin.findOne({ email });
     if (admin) {
       const checkAdmin = await bcrypt.compare(password, admin.password);
       if (checkAdmin) {
@@ -37,6 +81,8 @@ async function userSignInController(req, res) {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "Lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          path: "/",
         });
 
         return res.json({
@@ -45,53 +91,6 @@ async function userSignInController(req, res) {
           role: "admin",
           redirectUrl: "/admin/dashboard",
           access_token: adminToken,
-        });
-      }
-    }
-
-    const user = await userModel.findOne({ email });
-    if (!user || !user.password) {
-      return res.status(400).json({ message: "Invalid admin credentials", success: false });
-    }
-    if (user) {
-      const checkUser = await bcrypt.compare(password, user.hashPassword);
-      if (checkUser) {
-        const tokenData = {
-          _id: user._id,
-          email: user.email,
-          role: "user",
-        };
-        const userToken = jwt.sign(tokenData, process.env.USER_SECRET_KEY, {
-          expiresIn: "5d",
-        });
-
-        res.cookie("userId", user._id.toString(), {
-          httpOnly: true, 
-          secure: process.env.NODE_ENV === "production", 
-          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-          maxAge: 5 * 24 * 60 * 60 * 1000, 
-          path: '/'
-        });
-        
-        res.cookie("userToken", userToken, {
-          httpOnly: true, 
-          secure: process.env.NODE_ENV === "production",  
-          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-          maxAge: 5 * 24 * 60 * 60 * 1000, 
-          path: '/'
-        });
-
-        return res.status(200).json({
-          success: true,
-          token: userToken,
-          user: {
-            userId: user._id.toString(),
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-            profilePic: user.profilePic,
-          },
         });
       }
     }
