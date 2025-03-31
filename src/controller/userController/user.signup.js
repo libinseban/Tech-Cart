@@ -20,11 +20,11 @@ const userSignUpController = async (req, res) => {
 
     // Hash password asynchronously
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashPassword = await bcrypt.hash(password, salt);
 
     const user = new userModel({
       email,
-      password: hashedPassword, 
+      hashPassword, 
       firstName,
       lastName,
       profilePic:profilePic,
@@ -56,6 +56,7 @@ const userSignUpController = async (req, res) => {
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       profilePic: savedUser.profilePic,
+      hashPassword: savedUser.hashPassword,
       message: "User Created Successfully",
       success: true,
       error: false,

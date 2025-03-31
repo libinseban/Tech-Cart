@@ -15,39 +15,7 @@ async function userSignInController(req, res) {
         .json({ message: "Please provide email and password", success: false });
     }
 
-    // Check if admin exists
-    const admin = await Admin.findOne({ email });
-    if (!admin || !admin.password) {
-      return res.status(400).json({ message: "Invalid admin credentials", success: false });
-    }
     
-    if (admin) {
-      const checkAdmin = await bcrypt.compare(password, admin.password);
-      if (checkAdmin) {
-        const tokenData = {
-          _id: admin._id,
-          email: admin.email,
-          role: "admin",
-        };
-        const adminToken = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-          expiresIn: "1d",
-        });
-
-        res.cookie("access_token", adminToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Lax",
-        });
-
-        return res.json({
-          success: true,
-          message: "Login Successful",
-          role: "admin",
-          redirectUrl: "/admin/dashboard",
-          access_token: adminToken,
-        });
-      }
-    }
 
     const user = await userModel.findOne({ email });
     if (!user || !user.hashPassword) {
@@ -83,19 +51,51 @@ async function userSignInController(req, res) {
 
         return res.status(200).json({
           success: true,
-          token: userToken,
-          user: {
+          userToken: userToken,
+         
             userId: user._id.toString(),
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             role: user.role,
             profilePic: user.profilePic,
-          },
+        
         });
       }
     }
+// Check if admin exists
+const admin = await Admin.findOne({ email });
+if (!admin || !admin.password) {
+  return res.status(400).json({ message: "Invalid admin credentials", success: false });
+}
 
+if (admin) {
+  const checkAdmin = await bcrypt.compare(password, admin.password);
+  if (checkAdmin) {
+    const tokenData = {
+      _id: admin._id,
+      email: admin.email,
+      role: "admin",
+    };
+    const adminToken = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    res.cookie("access_token", adminToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+    });
+
+    return res.json({
+      success: true,
+      message: "Login Successful",
+      role: "admin",
+      redirectUrl: "/admin/dashboard",
+      access_token: adminToken,
+    });
+  }
+}
     return res.status(400).json({
       message: "Email or password is incorrect",
       success: false,
