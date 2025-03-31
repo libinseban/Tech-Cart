@@ -50,7 +50,7 @@ async function userSignInController(req, res) {
     }
 
     const user = await userModel.findOne({ email });
-    if (!user || !user.password) {
+    if (!user || !user.hashPassword) {
       return res.status(400).json({ message: "Invalid admin credentials", success: false });
     }
     if (user) {
