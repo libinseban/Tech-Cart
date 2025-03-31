@@ -1,7 +1,8 @@
 const Order = require("../models/others/orderModel");
 
-const getOrdersByStatus = async (req, res, status) => {
+const getOrdersByStatus = async (req, res) => {
   try {
+    const status = req.params.status;
     const orders = await Order.find({ orderStatus: status });
     return res.status(200).json({ 
       message: `${status} order list`, 
@@ -13,15 +14,8 @@ const getOrdersByStatus = async (req, res, status) => {
   }
 };
 
-const getConfirmedOrders = async (req, res) => getOrdersByStatus(req, res, "confirmed");
-const getShippedOrders = async (req, res) => getOrdersByStatus(req, res, "shipped");
-const getDeliveredOrders = async (req, res) => getOrdersByStatus(req, res, "delivered");
-const getCancelledOrders = async (req, res) => getOrdersByStatus(req, res, "cancelled");
 
 
 
 module.exports = {
-  getConfirmedOrders,
-  getShippedOrders,
-  getDeliveredOrders,
-  getCancelledOrders};
+getOrdersByStatus};

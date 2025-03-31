@@ -10,7 +10,6 @@ require("dotenv").config();
 const app = express();
 
 
-// Environment-specific configuration for origins
 const allowedOrigins = [
     "http://localhost:5173", 
     "http://localhost:5175", 

@@ -40,7 +40,7 @@ const adminSignIn = async (req, res) => {
             .json({
                 success: true,
                 message: "Login Successful",
-                token,
+                acess_token: token,
                 admin,
                 redirectUrl: "/adminDashboard"
             });

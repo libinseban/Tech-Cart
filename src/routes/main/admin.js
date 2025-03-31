@@ -13,10 +13,7 @@ const authToken = require("../../middleware/authToken");
 const adminDetails = require("../../test/admin/adminDetails");
 const editAdmin = require("../../test/admin/editAdminProfile");
 const {
-  getConfirmedOrders,
-  getShippedOrders,
-  getDeliveredOrders,
-  getCancelledOrders,
+  getOrdersByStatus
 } = require("../../helper/fetchOrders");
 
 adminRouter.post("/signup", adminSignUp);
@@ -57,28 +54,28 @@ adminRouter.put(
 );
 
 adminRouter.get("/getOrders", adminToken, OrderController.getAllOrders);
+adminRouter.get('/:status/orders', adminToken, (req, res) => {
+  OrderController.getOrdersByStatus(req, res, req.params.status);
+});
+
 adminRouter.put(
   "/confirmOrder/:orderId",
   adminToken,
   OrderController.confirmOrders
 );
-adminRouter.get("/confirmed/orders", adminToken, getConfirmedOrders);
 adminRouter.put(
   "/shippingOrders/:orderId",
   adminToken,
   OrderController.shippingOrders
 );
-adminRouter.get("/shipped/orders", adminToken, getShippedOrders)
 
 adminRouter.put("/deliver/:orderId", adminToken, OrderController.deliveryOrders);
-adminRouter.get("/delivered/orders",adminToken,getDeliveredOrders)
 adminRouter.put(
   "/cancelOrder/:orderId",
   adminToken,
   OrderController.cancelledOrders
 );
 
-adminRouter.get("/cancelled/orders" , adminToken, getCancelledOrders)
 
 adminRouter.put(
   "/deleteOrder/:orderId",
