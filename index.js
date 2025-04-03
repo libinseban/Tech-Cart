@@ -13,7 +13,8 @@ const app = express();
 const allowedOrigins = [
     "http://localhost:5173", 
     "http://localhost:5175", 
-    "https://frontend-chi-ashy-91.vercel.app"
+    "https://frontend-chi-ashy-91.vercel.app",
+    "https://libinseban.github.io/TechCart-Frontend/"
 ];
 
 // CORS options

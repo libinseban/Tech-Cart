@@ -12,7 +12,7 @@ const adminSignIn = async (req, res) => {
             res.send(400).json({message:"email and password required"})
         }
 
-        let admin = await adminModel.findOne({email: adminEmail});
+        let admin = await adminModel.findOne({email});
         if (email != admin.email) {
             return res.status(404).json({ message: 'Admin not found.. ' });
         }

@@ -1,6 +1,6 @@
 const adminModel = require('../../models/client/adminModel');
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 
 const editAdmin = async (req, res) => {
     try {

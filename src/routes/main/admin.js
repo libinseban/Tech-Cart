@@ -15,6 +15,7 @@ const editAdmin = require("../../test/admin/editAdminProfile");
 const {
   getOrdersByStatus
 } = require("../../helper/fetchOrders");
+const getUsers = require("../../test/admin/getUsers");
 
 adminRouter.post("/signup", adminSignUp);
 adminRouter.post("/signin", adminSignIn);
@@ -36,6 +37,8 @@ adminRouter.get(
   productController.findProductById
 );
 adminRouter.get("/products", adminToken, productController.getAllProducts);
+adminRouter.get('/users', adminToken, getUsers)
+
 adminRouter.post(
   "/creates",
   adminToken,
