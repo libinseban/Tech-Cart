@@ -10,7 +10,7 @@ pendingSellers.get('/pending', async (req, res) => {
         if (pendingSellers.length === 0) {
             return res.json({ message: "There are no pending sellers" });
         }
-        res.json(pendingSellers);
+        res.json({pendingSellers});
     } catch (error) {
         console.error('Error fetching pending sellers:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -29,5 +29,19 @@ pendingSellers.put('/:sellerId', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+pendingSellers.get('/approved', async (req, res) => {
+    try {
+        const approvedSellers = await Seller.find({ isApproved: true });
+
+        if (approvedSellers.length === 0) {
+            return res.json({ message: "There are no approved sellers" });
+        }
+        res.json({approvedSellers});
+    } catch (error) {
+        console.error('Error fetching pending sellers:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+})
 
 module.exports = pendingSellers;

@@ -7,9 +7,8 @@ const adminToken = require("../../middleware/adminVerification");
 const adminLogout = require("../../controller/adminControllers/adminLogOut");
 const OrderController = require("../../controller/adminControllers/adminOrder");
 const productController = require("../../controller/elements/productControl");
-const approveSellers = require("../image/sellerControl");
-const productImage = require("../image/productImage");
-const authToken = require("../../middleware/authToken");
+const pendingSellers = require("../other/sellerControl");
+const productImage = require("../other/productImage");
 const adminDetails = require("../../test/admin/adminDetails");
 const editAdmin = require("../../test/admin/editAdminProfile");
 const {
@@ -57,9 +56,10 @@ adminRouter.put(
 );
 
 adminRouter.get("/getOrders", adminToken, OrderController.getAllOrders);
-adminRouter.get('/:status/orders', adminToken, (req, res) => {
+adminRouter.get('/orders/:status', adminToken, (req, res) => {
   OrderController.getOrdersByStatus(req, res, req.params.status);
 });
+
 
 adminRouter.put(
   "/confirmOrder/:orderId",
@@ -80,11 +80,13 @@ adminRouter.put(
 );
 
 
-adminRouter.put(
+adminRouter.delete(
   "/deleteOrder/:orderId",
   adminToken,
   OrderController.deleteOrders
 );
-adminRouter.use("/approveSellers", authToken, approveSellers);
+
+// adminRouter.get('/sellerDetails',authToken, getSellerDetails)
+adminRouter.use("/approveSellers", adminToken, pendingSellers);
 
 module.exports = adminRouter;

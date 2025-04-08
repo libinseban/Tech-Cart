@@ -36,7 +36,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-  createAd: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },

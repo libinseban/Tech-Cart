@@ -107,6 +107,10 @@ const createOrder = async (userId, shippingAddress) => {
     const price = totalPrice - totalDiscountPrice;
     const products = cart.cartItem.map(item => item.product._id);
 
+    console.log("Products in order:", products);
+    console.log("Products in order:", products);
+console.log("product recieved :", products)
+
     const paymentCapture = 1; 
     const razorpayOptions = {
       amount: price, 
@@ -133,13 +137,14 @@ const createOrder = async (userId, shippingAddress) => {
 
     await order.save();
 
+    console.log("Order before saving:", order);
+
     const updateResult = await Cart.findOneAndUpdate(
       { user: userId },
       { $set: { cartItem: [] } },
       { new: true }
     );
 
-await updateResult.save()
     const sellers = new Set();
     cart.cartItem.forEach(item => {
       if (item.product.seller) {
@@ -147,7 +152,8 @@ await updateResult.save()
       }
     });
 
-    for (const sellerId of sellers) {
+    const sellerDetails = await Promise.all([...sellers].map(sellerId => Seller.findById(sellerId)));
+    for (const sellerId of sellerDetails) {
       const seller = await Seller.findById(sellerId);
       
       const sellerProducts = cart.cartItem
@@ -179,7 +185,7 @@ await updateResult.save()
       message: 'Order placed successfully',
       order,
       razorpayOrderId: razorpayOrder.id, 
-      amount: price,               
+      amount: price*100,               
       currency: "INR"
     };
   } catch (error) {
@@ -212,7 +218,8 @@ const cancelOrder = async (req, res) => {
         const message = `Dear ${productDetails.seller.name}, the order containing your product
          ${productDetails.title} has been cancelled by the user.`;
 
-        await sendEmail(sellerEmail, subject, message);
+       await sendEmail(sellerEmail, productDetails.seller.name, subject, productDetails.title, {},message, new Date());
+      
       }
     }
 
@@ -232,7 +239,7 @@ async function findOrder(productId, userId) {
     })
     .populate({
       path: 'products',
-      select: '_id title',  
+      select: '_id title price discountPrice',  
     })
     .lean();
     
@@ -244,7 +251,7 @@ async function findOrder(productId, userId) {
         .map(product => ({
           product: product,
           status: order.orderStatus,
-          orderDate:order.createAd
+          orderDate:order.createdAt
         }))
     })).filter(order => order.products.length > 0); 
     return orderStatuses;
@@ -261,10 +268,10 @@ async function findOrder(productId, userId) {
         user: userId,
         orderStatus: { $in: [ "PENDING","CONFIRMED"] }
       })
-        .populate({
-          path: 'user',
-          select: 'name email' 
-        })
+      .populate({
+        path: 'products',
+        select: 'title price discountPrice'
+      })
         .lean();
   
    if (orders.length === 0) {

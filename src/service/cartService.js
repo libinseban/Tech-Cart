@@ -21,7 +21,7 @@ async function findUserCart(userId) {
         populate: {
           path: "product",
           model: "Product",
-          select: "title price discountPrice brand productImages description",
+          select: "_id title price discountPrice brand productImages description",
         },
       })
       .exec();
@@ -76,7 +76,7 @@ async function findUserCart(userId) {
   }
 }
 
-async function addCartItem(userId, { productId }) {
+async function addCartItem(userId, { productId,quantity }) {
   try {
     let cart = await Cart.findOne({ user: userId });
     if (!cart) {
@@ -96,15 +96,14 @@ async function addCartItem(userId, { productId }) {
     });
 
     if (existingCartItem) {
-      // If item exists, increment quantity
-      existingCartItem.quantity += 1;
+      existingCartItem.quantity = quantity; 
       await existingCartItem.save();
     } else {
       // Create new cart item with product price
       const cartItem = new CartItem({
         product: productId,
         user: userId,
-        quantity: 1,
+        quantity: quantity || 1,
         price: product.price,
         discountPrice: product.discountPrice || 0,
         cart: cart._id,

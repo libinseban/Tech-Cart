@@ -36,6 +36,7 @@ const userId=req.cookies.userId
     return res.status(500).send({ error: error.message });
   }
 };
+
 const removeItemCartController = async (req, res) => {
   const userId=req.cookies.userId
   const productId = req.params.productId;

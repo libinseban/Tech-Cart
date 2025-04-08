@@ -59,16 +59,41 @@ const cancelledOrders = async (req, res) => {
 };
 
 const deleteOrders = async (req, res) => {
+  const orderId = req.params.orderId;
   try {
-    const deletedOrder = await Order.find();
+    const deletedOrder = await Order.findByIdAndDelete(orderId);
     if (!deletedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
-    return res.status(200).json({message:"Order deleted successfully.", success: true });
+    return res.status(200).json({ message: "Order deleted successfully.", success: true });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+const getOrdersByStatus = async (req, res) => {
+  try {
+    const { status } = req.params; 
+
+    if (!status) {
+      return res.status(400).json({ error: 'Status is required' });
+    }
+
+    const orders = await Order.find({ orderStatus: status }).populate('user', 'name email');
+
+    if (!orders.length) {
+      return res.status(404).json({ message: 'No orders found for this status' });
+    }
+
+    res.status(200).json({orders});
+  } catch (error) {
+    console.error('Error fetching orders by status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 
 module.exports = {
   getAllOrders,
@@ -77,4 +102,5 @@ module.exports = {
   deliveryOrders,
   cancelledOrders,
   deleteOrders,
+  getOrdersByStatus
 };

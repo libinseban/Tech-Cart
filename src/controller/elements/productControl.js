@@ -186,12 +186,10 @@ const getAllProducts = async (req, res) => {
         return res.status(404).json({ error: "Category not found" });
       }
 
-      console.log("Found category ID:", foundCategory._id);
       filter = { category: foundCategory._id };
     }
 
     const products = await Product.find(filter).populate("category");
-    console.log("Fetched products:", products);
 
     return res.status(200).json(products.length ? products : []);
   } catch (error) {

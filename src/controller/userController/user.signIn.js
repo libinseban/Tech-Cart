@@ -26,7 +26,7 @@ async function userSignInController(req, res) {
           role: "Admin",
         };
         const adminToken = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-          expiresIn: "1d",
+          expiresIn: "7d",
         });
 
         res.cookie("access_token", adminToken, {

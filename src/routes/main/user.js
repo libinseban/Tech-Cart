@@ -1,10 +1,11 @@
+/** @format */
 
 const express = require("express");
 const userRouter = express.Router();
 const userSignUpController = require("../../controller/userController/user.signup");
 const userSignInController = require("../../controller/userController/user.signIn");
 const userLogout = require("../../controller/userController/user.logout");
-const uploadImage = require("../image/uploadImage");
+const uploadImage = require("../other/uploadImage");
 const authenticate = require("../../middleware/authToken");
 const {
   newOrder,
@@ -32,13 +33,10 @@ const ratingController = require("../../validators/rating");
 const reviewController = require("../../validators/review");
 const { getAllProducts } = require("../../controller/elements/productControl");
 const { cancelOrder } = require("../../service/orderSevice");
-const {
-  profilePicture,
-} = require("../../test/users/userDetails");
-const {
-  submitContact,
-} = require("../../helper/contactController");
+const { profilePicture } = require("../../test/users/userDetails");
+const { submitContact } = require("../../helper/contactController");
 const editUserProfile = require("../../test/users/editUserProfile");
+const productController = require("../../controller/elements/productControl");
 
 userRouter.post("/signup", uploadImage, userSignUpController);
 userRouter.post("/signin", userSignInController);
@@ -46,10 +44,17 @@ userRouter.post("/forget-password", forgetPassword);
 userRouter.post("/reset-password/:userToken", resetPassword);
 userRouter.post("/logout", userLogout);
 userRouter.get("/profile", authenticate, profilePicture);
-userRouter.put("/edit/profile", authenticate,uploadImage, editUserProfile)
+userRouter.put("/edit/profile", authenticate, uploadImage, editUserProfile);
 
 userRouter.get("/products", getAllProducts);
+
+userRouter.get(
+  "/products/:productId",
+  authenticate,
+  productController.findProductById
+);
 userRouter.post("/contact", submitContact);
+
 userRouter.get("/test-cookie", (req, res) => {
   res.json({ userToken: req.cookies.userToken, userId: req.cookies.userId });
 });
@@ -99,6 +104,5 @@ userRouter.delete(
   authenticate,
   reviewController.deleteReview
 );
-
 
 module.exports = userRouter;
