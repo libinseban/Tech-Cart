@@ -5,7 +5,7 @@ const { default: mongoose } = require("mongoose");
 const Cart = require("../../models/cart/cartModel");
 
 const findUserCartController = async (req, res) => {
-  console.log("Cookies: ", req.cookies); 
+  // console.log("Cookies: ", req.cookies); 
   const userId  = req.cookies.userId;
 
   try {

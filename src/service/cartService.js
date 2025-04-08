@@ -15,22 +15,28 @@ async function CreateCart(userId) {
 
 async function findUserCart(userId) {
   try {
-    const cart = await Cart.findOne({ user: userId })
-      .populate({
+    const cart = await Cart.findOne({ user: userId }).populate({
         path: "cartItem",
         populate: {
           path: "product",
           model: "Product",
           select: "_id title price discountPrice brand productImages description",
-        },
+        }
       })
-      .exec();
+    .exec();
+  
 
-    if (!cart || !cart.cartItem || cart.cartItem.length === 0) {
-      return { message: "Cart is empty" };
+    if (!cart) {
+      return { message: "Cart not found" };
     }
+    if (!cart.cartItem || cart.cartItem.length === 0) {
+      console.log("Cart found but no items");
+    }
+    
 
     const cartItems = cart.cartItem;
+    console.log("Cart items populated:", cartItems);
+
     let totalPrice = 0;
     let totalDiscountPrice = 0;
     let totalItem = 0;
@@ -93,6 +99,7 @@ async function addCartItem(userId, { productId,quantity }) {
     const existingCartItem = await CartItem.findOne({
       user: userId,
       product: productId,
+      cart: cart._id
     });
 
     if (existingCartItem) {

@@ -79,7 +79,7 @@ async function userSignInController(req, res) {
           path: "/",
         });
 
-        return res.status(200).json({
+        return res.json({
           success: true,
           userToken: userToken,
           userId: user._id.toString(),
