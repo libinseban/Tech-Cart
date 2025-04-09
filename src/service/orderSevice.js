@@ -6,6 +6,7 @@ const Seller = require("../models/client/seller");
 const nodemailer = require('nodemailer');
 const Product = require("../models/product/productModel");
 const Razorpay = require('razorpay');
+const CartItem = require("../models/cart/cartItem");
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
@@ -136,9 +137,8 @@ console.log("product recieved :", products)
     });
 
     await order.save();
-    cart.cartItem = [];
-    await cart.save();
-    console.log("Order before saving:", order);
+ 
+
 
     const updateResult = await Cart.findOneAndUpdate(
       { user: userId },
@@ -180,7 +180,15 @@ console.log("product recieved :", products)
       }
     }
     
-    
+const userCart = await Cart.findOne({ user: userId });
+
+if (userCart) {
+  await CartItem.deleteMany({ _id: { $in: userCart.cartItem } });
+  userCart.cartItem = [];
+  await userCart.save();
+}
+
+
  
 
     return {

@@ -83,7 +83,7 @@ async function findUserCart(userId) {
 
 async function addCartItem(userId, { productId,quantity }) {
   try {
-    let cart = await Cart.findOne({ user: userId }).populate("cartItem");
+    let cart = await Cart.findOne({ user: userId }).populate('cartItem');
     if (!cart) {
       cart = await CreateCart(userId);
     }
@@ -98,7 +98,6 @@ async function addCartItem(userId, { productId,quantity }) {
     const existingCartItem = await CartItem.findOne({
       user: userId,
       product: productId,
-      order: { $exists: false }
     });
 
     if (existingCartItem) {
@@ -112,6 +111,7 @@ async function addCartItem(userId, { productId,quantity }) {
         quantity: quantity || 1,
         price: product.price,
         discountPrice: product.discountPrice || 0,
+        cart: cart._id,
       });
 
       const savedCartItem = await cartItem.save();
@@ -128,7 +128,7 @@ async function addCartItem(userId, { productId,quantity }) {
 
 async function removeCartItem(userId, productId) {
   try {
-    const cart = await Cart.findOne({ user: userId });
+    const cart = await Cart.findOne({ user: userId }).populate('cartItem')
 
     if (!cart) {
       console.log("Cart not found");
@@ -138,6 +138,7 @@ async function removeCartItem(userId, productId) {
     const cartItem = await CartItem.findOne({
       product: productId,
       user: userId,
+
     });
     if (!cartItem) {
       console.log("Cart item not found");
