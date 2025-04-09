@@ -136,7 +136,8 @@ console.log("product recieved :", products)
     });
 
     await order.save();
-
+    cart.cartItem = [];
+    await cart.save();
     console.log("Order before saving:", order);
 
     const updateResult = await Cart.findOneAndUpdate(
@@ -180,6 +181,7 @@ console.log("product recieved :", products)
     }
     
     
+ 
 
     return {
       message: 'Order placed successfully',
