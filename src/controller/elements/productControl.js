@@ -45,7 +45,6 @@ const createProduct = async (req, res) => {
     });
   }
 
-  console.log("Creating product...");
 
   try {
     const newProduct = new Product({
@@ -175,7 +174,6 @@ const getAllProducts = async (req, res) => {
     let filter = {};
 
     if (category) {
-      console.log("Checking category:", category);
 
       const foundCategory = await Category.findOne({
         name: new RegExp(`^${category.trim().toLowerCase()}$`, 'i'),

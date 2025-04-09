@@ -35,7 +35,6 @@ async function findUserCart(userId) {
     
 
     const cartItems = cart.cartItem;
-    console.log("Cart items populated:", cartItems);
 
     let totalPrice = 0;
     let totalDiscountPrice = 0;
