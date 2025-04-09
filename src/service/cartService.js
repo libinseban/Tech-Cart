@@ -83,7 +83,7 @@ async function findUserCart(userId) {
 
 async function addCartItem(userId, { productId,quantity }) {
   try {
-    let cart = await Cart.findOne({ user: userId });
+    let cart = await Cart.findOne({ user: userId }).populate("cartItem");
     if (!cart) {
       cart = await CreateCart(userId);
     }
@@ -98,7 +98,7 @@ async function addCartItem(userId, { productId,quantity }) {
     const existingCartItem = await CartItem.findOne({
       user: userId,
       product: productId,
-      cart: cart._id
+      order: { $exists: false }
     });
 
     if (existingCartItem) {
@@ -112,7 +112,6 @@ async function addCartItem(userId, { productId,quantity }) {
         quantity: quantity || 1,
         price: product.price,
         discountPrice: product.discountPrice || 0,
-        cart: cart._id,
       });
 
       const savedCartItem = await cartItem.save();
