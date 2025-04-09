@@ -35,7 +35,7 @@ async function userSignInController(req, res) {
           sameSite: "Lax",
         });
 
-        return res.json({
+        return res.status(200).json({
           success: true,
           message: "Login Successful",
           role: "Admin",
@@ -79,7 +79,7 @@ async function userSignInController(req, res) {
           path: "/",
         });
 
-        return res.json({
+        return res.status(200).json({
           success: true,
           userToken: userToken,
           userId: user._id.toString(),
