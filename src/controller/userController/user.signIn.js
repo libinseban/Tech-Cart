@@ -64,17 +64,17 @@ async function userSignInController(req, res) {
         });
 
         res.cookie("userId", user._id.toString(), {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
           maxAge: 5 * 24 * 60 * 60 * 1000,
           path: "/",
         });
 
         res.cookie("userToken", userToken, {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
           maxAge: 5 * 24 * 60 * 60 * 1000,
           path: "/",
         });
