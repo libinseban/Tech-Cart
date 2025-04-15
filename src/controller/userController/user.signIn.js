@@ -31,16 +31,20 @@ async function userSignInController(req, res) {
 
         res.cookie("access_token", adminToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Lax",
+          secure: true,
+          sameSite: 'None',
+          path: "/",
         });
 
         return res.status(200).json({
           success: true,
           message: "Login Successful",
-          role: "Admin",
           redirectUrl: "/admin/dashboard",
           access_token: adminToken,
+          name: checkAdmin.name,
+          email: checkAdmin.email,
+          role: checkAdmin.role,
+
         });
       } else {
         return res

@@ -3,10 +3,12 @@ const Order = require("../../models/others/orderModel");
 async function getAllOrders(req, res) {
   try {
     const orders = await Order.find()
-      .populate({ path: 'user', select: 'name email' })
-      .populate({ path: 'address', select: 'streetAddress city state zipCode' })
-      .populate({ path: 'products', select: 'title price' })
-      .lean();
+  .sort({ createdAt: -1 }) 
+  .populate({ path: 'user', select: 'name email' })
+  .populate({ path: 'address', select: 'streetAddress city state zipCode' })
+  .populate({ path: 'products', select: 'title price seller category reviews ratings' })
+  .lean();
+
 
     return res.status(200).json({
       message: "Orders retrieved successfully",

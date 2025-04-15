@@ -24,31 +24,34 @@ async function sendEmail(sellerEmail, sellerName, subject, productNames, orderAd
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h3 style="color:blue">Dear ${sellerName},</h3>
-        <p>A new order has been placed for your  product:</p>
+        <p>A new order has been placed for your product(s):</p>
         <ul style="list-style-type: circle; padding-left: 20px;">
           ${productNames}
         </ul>
         
         <h4>Shipping Details</h4>
-        <p><strong>Name:</strong> ${orderAddress.name}<br>
-        <strong>Address:</strong> ${orderAddress.streetAddress}, ${orderAddress.city}, ${orderAddress.state} - ${orderAddress.zipCode}<br>
-        <strong>Contact Number:</strong> ${orderAddress.phoneNumber}</p>
+        <p>
+          <strong>Name:</strong> ${orderAddress.name}<br>
+          <strong>Address:</strong> ${orderAddress.streetAddress}, ${orderAddress.city}, ${orderAddress.state} - ${orderAddress.zipCode}<br>
+          <strong>Contact Number:</strong> ${orderAddress.phoneNumber}
+        </p>
         
-        <p><strong>Order Date:</strong> ${orderDate.toLocaleDateString()}</p>
+        <p><strong>Order Date:</strong> ${new Date(orderDate).toLocaleDateString()}</p>
         
-        <p>Thank you for your partnership. We will keep you informed of any updates regarding this order.</p>
-        
-        <p>Best regards<br></p>
-      </div>`
+        <p>Thank you for your continued partnership with <strong>Tech-Cart</strong>.</p>
+        <p style="margin-top: 30px;">Best Regards,<br><strong>Tech-Cart Team</strong></p>
+      </div>
+    `
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
+    console.log(`Email sent to ${sellerEmail}`);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Failed to send email:", error.message);
   }
 }
+
 
 
 
@@ -108,9 +111,6 @@ const createOrder = async (userId, shippingAddress) => {
     const price = totalPrice - totalDiscountPrice;
     const products = cart.cartItem.map(item => item.product._id);
 
-    console.log("Products in order:", products);
-    console.log("Products in order:", products);
-console.log("product recieved :", products)
 
     const paymentCapture = 1; 
     const razorpayOptions = {
@@ -140,11 +140,6 @@ console.log("product recieved :", products)
  
 
 
-    const updateResult = await Cart.findOneAndUpdate(
-      { user: userId },
-      { $set: { cartItem: [] } },
-      { new: true }
-    );
 
     const sellers = new Set();
     cart.cartItem.forEach(item => {
@@ -182,6 +177,13 @@ console.log("product recieved :", products)
     
 const userCart = await Cart.findOne({ user: userId });
 
+const updateResult = await Cart.findOneAndUpdate(
+  { user: userId },
+  { $set: { cartItem: [] } },
+  { new: true }
+);
+
+    
 if (userCart) {
   await CartItem.deleteMany({ _id: { $in: userCart.cartItem } });
   userCart.cartItem = [];
