@@ -99,13 +99,13 @@ async function addCartItem(userId, { productId,quantity }) {
     });
 
     if (existingItem) {
-      existingItem.quantity += quantity || 1;
-      await existingItem.save();
-      const cartItems = await CartItem.find({ user: userId }).populate("product");
+      existingItem.quantity += 1;
+      const existingCartItem=await existingItem.save();
       return res.status(200).json({
         message: "Product quantity updated",
-        cartItems,
-        alreadyInCart: true
+        alreadyInCart: true,
+        existingCartItem
+        
       });
     }else {
       // Create new cart item with product price
