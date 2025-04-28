@@ -93,17 +93,21 @@ async function addCartItem(userId, { productId,quantity }) {
     if (!product) {
       throw new Error("Product not found");
     }
-
-    // Check if the item already exists in the cart
-    const existingCartItem = await CartItem.findOne({
+    const existingItem = await CartItem.findOne({
       user: userId,
       product: productId,
     });
 
-    if (existingCartItem) {
-      existingCartItem.quantity = quantity; 
-      await existingCartItem.save();
-    } else {
+    if (existingItem) {
+      existingItem.quantity += quantity || 1;
+      await existingItem.save();
+      const cartItems = await CartItem.find({ user: userId }).populate("product");
+      return res.status(200).json({
+        message: "Product quantity updated",
+        cartItems,
+        alreadyInCart: true
+      });
+    }else {
       // Create new cart item with product price
       const cartItem = new CartItem({
         product: productId,
