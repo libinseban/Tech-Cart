@@ -83,7 +83,7 @@ async function findUserCart(userId) {
 
 async function addCartItem(userId, { productId,quantity }) {
   try {
-    let cart = await Cart.findOne({ user: userId }).populate('cartItem').select('quantity');
+    let cart = await Cart.findOne({ user: userId }).populate('cartItem')
     if (!cart) {
       cart = await CreateCart(userId);
     }
