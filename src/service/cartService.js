@@ -1,4 +1,3 @@
-
 const Cart = require("../models/cart/cartModel");
 const Products = require("../models/product/productModel");
 const CartItem = require("../models/cart/cartItem");
@@ -16,83 +15,74 @@ async function CreateCart(userId) {
 async function findUserCart(userId) {
   try {
     const cart = await Cart.findOne({ user: userId }).populate({
-        path: "cartItem",
-        populate: {
-          path: "product",
-          model: "Product",
-          select: "_id title price discountPrice brand productImages description",
-        }
-      })
-    .exec();
-  
+      path: "cartItem",
+      populate: {
+        path: "product",
+        model: "Product",
+        select: "_id title price discountPrice brand productImages description",
+      },
+    }).exec();
 
     if (!cart) {
       return { message: "Cart not found" };
     }
-    if (!cart.cartItem || cart.cartItem.length === 0) {
-      console.log("Cart found but no items");
-    }
-    
-
-    const cartItems = cart.cartItem;
+    const cartItems = cart.cartItem || [];
 
     let totalPrice = 0;
     let totalDiscountPrice = 0;
     let totalItem = 0;
 
-    const products = cartItems
-      .map((item) => {
-        const { product, quantity } = item;
-        if (!product) return null;
+    const products = cartItems.map((item) => {
+      const { product, quantity } = item;
+      if (!product || !quantity) return null;
 
-        totalPrice += product.price * quantity;
-        totalDiscountPrice += (product.discountPrice || 0) * quantity;
-        totalItem += quantity;
+      totalPrice += product.price * quantity;
+      totalDiscountPrice += (product.discountPrice || 0) * quantity;
+      totalItem += quantity;
 
-        return {
-          product: {
-            productId: product._id,
-            title: product.title,
-            price: product.price,
-            discountPrice: product.discountPrice,
-            brand: product.brand,
-            productImages: product.productImages,
-            description: product.description,
-          },
-          quantity,
-          itemTotal: product.price * quantity,
-          itemDiscountTotal: (product.discountPrice || 0) * quantity,
-        };
-      })
-      .filter((item) => item !== null);
+      return {
+        product: {
+          productId: product._id,
+          title: product.title,
+          price: product.price,
+          discountPrice: product.discountPrice,
+          brand: product.brand,
+          productImages: product.productImages,
+          description: product.description,
+        },
+        quantity,
+        itemTotal: product.price * quantity,
+        itemDiscountTotal: (product.discountPrice || 0) * quantity,
+      };
+    }).filter(Boolean);
 
     return {
-      cart: cart._id,
-      user: cart.user,
-      products,
-      totalDiscountPrice,
+      cartId: cart._id,
+      items: products,
       totalPrice,
+      totalDiscountPrice,
       totalItem,
       finalPrice: totalPrice - totalDiscountPrice,
     };
+
   } catch (error) {
     console.error("Error finding user cart:", error);
     throw error;
   }
 }
 
-async function addCartItem(userId, { productId,quantity }) {
+async function addCartItem(userId, { productId, quantity }) {
   try {
-    let cart = await Cart.findOne({ user: userId }).populate('cartItem')
+    let cart = await Cart.findOne({ user: userId }).populate('cartItem');
     if (!cart) {
       cart = await CreateCart(userId);
     }
 
-    // First fetch the product to get its price
     const product = await Products.findById(productId);
     if (!product) {
       throw new Error("Product not found");
     }
+
     const existingItem = await CartItem.findOne({
       user: userId,
       product: productId,
@@ -100,15 +90,13 @@ async function addCartItem(userId, { productId,quantity }) {
 
     if (existingItem) {
       existingItem.quantity += 1;
-      const existingCartItem=await existingItem.save();
-      return res.status(200).json({
+      await existingItem.save();
+      return {
         message: "Product quantity updated",
         alreadyInCart: true,
-        existingCartItem
-        
-      });
-    }else {
-      // Create new cart item with product price
+        cart: await findUserCart(userId),
+      };
+    } else {
       const cartItem = new CartItem({
         product: productId,
         user: userId,
@@ -121,9 +109,13 @@ async function addCartItem(userId, { productId,quantity }) {
       const savedCartItem = await cartItem.save();
       cart.cartItem.push(savedCartItem._id);
       await cart.save();
-    }
 
-    return await findUserCart(userId);
+      return {
+        message: "Product added to cart",
+        alreadyInCart: false,
+        cart: await findUserCart(userId),
+      };
+    }
   } catch (error) {
     console.error("Error adding item to cart:", error);
     throw error;
@@ -132,7 +124,7 @@ async function addCartItem(userId, { productId,quantity }) {
 
 async function removeCartItem(userId, productId) {
   try {
-    const cart = await Cart.findOne({ user: userId }).populate('cartItem')
+    const cart = await Cart.findOne({ user: userId }).populate('cartItem');
 
     if (!cart) {
       console.log("Cart not found");
@@ -142,7 +134,6 @@ async function removeCartItem(userId, productId) {
     const cartItem = await CartItem.findOne({
       product: productId,
       user: userId,
-
     });
     if (!cartItem) {
       console.log("Cart item not found");
