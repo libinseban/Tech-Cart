@@ -101,7 +101,7 @@ async function addCartItem(userId, { productId,quantity }) {
     });
 
     if (existingCartItem) {
-      existingCartItem.quantity += quantity||1; 
+      existingCartItem.quantity = quantity; 
       await existingCartItem.save();
     } else {
       // Create new cart item with product price
