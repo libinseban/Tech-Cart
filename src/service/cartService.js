@@ -83,7 +83,7 @@ async function findUserCart(userId) {
 
 async function addCartItem(userId, { productId,quantity }) {
   try {
-    let cart = await Cart.findOne({ user: userId }).populate('cartItem');
+    let cart = await Cart.findOne({ user: userId }).populate('cartItem').select('quantity');
     if (!cart) {
       cart = await CreateCart(userId);
     }
@@ -101,7 +101,7 @@ async function addCartItem(userId, { productId,quantity }) {
     });
 
     if (existingCartItem) {
-      existingCartItem.quantity = quantity; 
+      existingCartItem.quantity += quantity; 
       await existingCartItem.save();
     } else {
       // Create new cart item with product price
