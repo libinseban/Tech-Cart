@@ -98,6 +98,8 @@ async function addCartItem(userId, { productId,quantity }) {
       product: productId,
     });
 
+
+    
     if (existingItem) {
       existingItem.quantity += 1;
       const existingCartItem=await existingItem.save();
