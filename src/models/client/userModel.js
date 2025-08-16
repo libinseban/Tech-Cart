@@ -33,16 +33,15 @@ const userShema=new mongoose.Schema({
         default: 'USER'
       },
       address:
-              {
-                type:mongoose.Schema.Types.ObjectId,
+              {    type: mongoose.Schema.Types.ObjectId,
                     ref:"address",
                   required: true,
-                  type: [String],
+                 
               }
             ,
             phoneNumber: {
               type: String,
-              required:Number
+              required:true
             
             },
                isApproved: {
@@ -51,8 +50,7 @@ const userShema=new mongoose.Schema({
     }, 
       
       
-}, { timestamps: true }, {
-  useFindAndModify: false, 
+}, { timestamps: true 
 })
 const User=mongoose.model("User",userShema)
 

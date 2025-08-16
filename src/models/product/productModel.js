@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    
+
     discountPercentage: {
         type: Number,
         default: 0
@@ -68,8 +68,8 @@ const productSchema = new mongoose.Schema({
 type: Number,
         required: true,
     },
-    category: { type: String },
-    user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]
+category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' }
+,    user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const Product = mongoose.model("Product", productSchema);
