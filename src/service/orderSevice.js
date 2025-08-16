@@ -126,7 +126,7 @@ const createOrder = async (userId, shippingAddress) => {
     const order = new Order({
       user: userId,
       orderDate: new Date(),
-      address: address,
+      address: address._id,
       totalPrice,
       totalDiscountPrice,
       totalItem,
@@ -196,7 +196,7 @@ if (userCart) {
       message: 'Order placed successfully',
       order,
       razorpayOrderId: razorpayOrder.id, 
-      amount: price*100,               
+      amount: Math.round(finalPrice * 100),            
       currency: "INR"
     };
   } catch (error) {
