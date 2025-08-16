@@ -87,6 +87,6 @@ adminRouter.delete(
 );
 
 // adminRouter.get('/sellerDetails',authToken, getSellerDetails)
-adminRouter.use("/approveSellers", adminToken, pendingSellers);
+adminRouter.use("/approveUsers", adminToken, pendingSellers);
 
 module.exports = adminRouter;

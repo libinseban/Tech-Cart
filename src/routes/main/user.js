@@ -7,6 +7,9 @@ const userSignInController = require("../../controller/userController/user.signI
 const userLogout = require("../../controller/userController/user.logout");
 const uploadImage = require("../other/uploadImage");
 const authenticate = require("../../middleware/authToken");
+const productImage = require("../other/productImage");
+const productController = require("../../controller/elements/productControl");
+
 const {
   newOrder,
   OrderHistory,
@@ -25,6 +28,8 @@ const {
   addItemCartController,
   findUserCartById,
 } = require("../../controller/elements/cartControl");
+const UserController = require("../../controller/userController/userControl")
+
 const {
   forgetPassword,
   resetPassword,
@@ -37,6 +42,7 @@ const { profilePicture } = require("../../test/users/userDetails");
 const { submitContact } = require("../../helper/contactController");
 const editUserProfile = require("../../test/users/editUserProfile");
 const productController = require("../../controller/elements/productControl");
+const { upload } = require("../../middleware/chat");
 
 userRouter.post("/signup", uploadImage, userSignUpController);
 userRouter.post("/signin", userSignInController);
@@ -58,6 +64,9 @@ userRouter.post("/contact", submitContact);
 userRouter.get("/test-cookie", (req, res) => {
   res.json({ userToken: req.cookies.userToken, userId: req.cookies.userId });
 });
+userRouter.post("/send-message", authenticate, upload.single('file'), sendMessage)
+
+
 
 userRouter.get("/wish-list", authenticate, getWishlist);
 userRouter.get("/wish-list/get/:productId", authenticate, getWishlistProduct);
@@ -104,5 +113,21 @@ userRouter.delete(
   authenticate,
   reviewController.deleteReview
 );
+
+
+userRouter.post('/createProduct',authenticate,productImage,productController.createProduct);
+userRouter.post('MultipleProducts/creates', authenticate,productController.createMultipleProducts);
+userRouter.put('/updateProduct/:productId', authenticate,productImage,productController.updateProduct);
+userRouter.get('/findProduct/:productId',authenticate, productController.findProductById);
+userRouter.get('/getAllProducts',authenticate,productController.getAllProducts);
+userRouter.delete('/deleteProduct/:productId', authenticate, productController.deleteProduct);
+
+userRouter.get('/getOrder',authenticate,UserController.getOrders)
+userRouter.put("/confirmOrder/:orderId",authenticate,UserController.confirmOrders);
+userRouter.put("/shipOrder/:orderId",authenticate,UserController.shippingOrders);
+userRouter.put("/deliver/:orderId",authenticate,UserController.deliverOrders);
+userRouter.put("/cancelOrder/:orderId",authenticate,UserController.cancelOrders);
+userRouter.put("/deleteOrder/:orderId", authenticate, UserController.deleteOrders);
+
 
 module.exports = userRouter;

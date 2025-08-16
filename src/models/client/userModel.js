@@ -31,7 +31,24 @@ const userShema=new mongoose.Schema({
         type: String,
         enum: ['ADMIN', 'SELLER', 'USER'], 
         default: 'USER'
-      }
+      },
+      address:
+              {
+                type:mongoose.Schema.Types.ObjectId,
+                    ref:"address",
+                  required: true,
+                  type: [String],
+              }
+            ,
+            phoneNumber: {
+              type: String,
+              required:Number
+            
+            },
+               isApproved: {
+        type: Boolean,
+        default: false 
+    },
       
       
 })

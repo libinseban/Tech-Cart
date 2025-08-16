@@ -60,7 +60,7 @@ const productSchema = new mongoose.Schema({
         default: Date.now,
     },
     category: { type: String },
-    seller: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }]
+    user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]
 });
 
 const Product = mongoose.model("Product", productSchema);

@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const seller = require("./src/routes/main/seller");
 const cors = require("cors");
 require("dotenv").config();
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
 
@@ -59,9 +61,33 @@ app.get("/test-cors", (req, res) => {
 
 const PORT = process.env.PORT;
 
-// Database connection and server start
-connectDb().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running at ${PORT}`);
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Socket.IO Configuration
+const io = new Server(server, {
+    cors: corsOptions
+});
+
+// Socket.IO event handlers
+io.on("connection", (socket) => {
+    console.log(`User connected: ${socket.id}`)
+
+    socket.on("sendMessage", (data) => {
+        console.log("Message Received", data)
+        socket.broadcast.emit("receiveMessage", data);
+    });
+
+    socket.on("disconnect", () => {
+        console.log(`User disconnected: ${socket.id}`);
     });
 });
+
+// Start server
+connectDb().then(() => {
+    server.listen(PORT, () => {
+        console.log(`Server + Socket.IO running at ${PORT}`);
+    });
+});
+

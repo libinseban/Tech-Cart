@@ -1,11 +1,11 @@
 const express = require('express');
 const pendingSellers = express.Router();
-const Seller = require('../../models/client/seller');
+const UserModel = require('../../models/client/userModel');
 
 
 pendingSellers.get('/pending', async (req, res) => {
     try {
-        const pendingSellers = await Seller.find({ isApproved: false });
+        const pendingSellers = await UserModel.find({ isApproved: false });
 
         if (pendingSellers.length === 0) {
             return res.json({ message: "There are no pending sellers" });
@@ -18,11 +18,11 @@ pendingSellers.get('/pending', async (req, res) => {
 });
 
 
-pendingSellers.put('/:sellerId', async (req, res) => {
-    const { sellerId } = req.params;
-    console.log(sellerId)
+pendingSellers.put('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    console.log(userId)
     try {
-        await Seller.findByIdAndUpdate(sellerId, { isApproved: true });
+        await Seller.findByIdAndUpdate(userId, { isApproved: true });
         res.status(200).json({ message: 'Seller approved successfully' });
     } catch (error) {
         console.error('Error approving seller:', error);
@@ -32,7 +32,7 @@ pendingSellers.put('/:sellerId', async (req, res) => {
 
 pendingSellers.get('/approved', async (req, res) => {
     try {
-        const approvedSellers = await Seller.find({ isApproved: true });
+        const approvedSellers = await UserModel.find({ isApproved: true });
 
         if (approvedSellers.length === 0) {
             return res.json({ message: "There are no approved sellers" });
@@ -43,5 +43,20 @@ pendingSellers.get('/approved', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 })
+
+
+pendingSellers.patch('/:userId', async (req, res) => {
+    const { userId } = req.params;
+    console.log(userId)
+    try {
+        await Seller.findByIdAndUpdate(userId, { isApproved: false });
+        res.status(200).json({ message: 'Seller approved successfully' });
+    } catch (error) {
+        console.error('Error approving seller:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 
 module.exports = pendingSellers;
