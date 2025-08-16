@@ -3,17 +3,18 @@
 const mongoose = require("mongoose");
 const Product = require("../../models/product/productModel");
 const Category = require("../../models/product/category");
-const User = require("../../models/client/userModel");
 
 const createProduct = async (req, res) => {
   const {
     title,
     description,
+    totalPrice,
     price,
     discountPrice,
     discountPercentage,
     brand,
     color,
+    model,
     category,
   } = req.body;
 
@@ -23,9 +24,17 @@ const createProduct = async (req, res) => {
   
   const productImages = req.uploadedImages;
 
-  if (!productImages || productImages.length === 0) {
-    return res.status(400).json({ message: "Product images are required" });
-  }
+if (!title || !totalPrice  || !brand || !category) {
+  return res.status(400).json({ error: 'Please provide all required fields including category' });
+}
+
+if (!productImages || productImages.length === 0) {
+  return res.status(400).json({ message: "Product images are required" });
+}
+
+if (discountPrice >= price || discountPercentage >= 100) {
+  return res.status(400).json({ error: "Invalid discount values" });
+}
 
   let foundCategory = await Category.findOne({ name: category });
 
@@ -33,37 +42,30 @@ const createProduct = async (req, res) => {
     foundCategory = new Category({ name: category, level: 1 });
     await foundCategory.save();
   }
-  if (!title || !price || !discountPrice || !discountPercentage  || !brand || !color || !category||!productImages) {
-    return res.status(400).json({ error: 'Please provide all required fields including category' });
-  }
-  if (discountPrice >= price || discountPercentage >= 100) {
-    return res.status(400).json({ error: "Invalid discount values" });
-  }
+
+  const finalPrice = price - (price * discountPercentage / 100);
 
   try {
     const product = new Product({
       title,
       description,
       price,
-      discountPrice,
+      discountPrice:finalPrice-price,
       discountPercentage,
       brand,
       color,
+      finalPrice,
       productImages,
       category:foundCategory._id,
       user: userId,
     });
 
     const savedProduct = await product.save();
-
-    const userModel = await User.findById(userId);
-    if (!userModel) {
-      return res.status(404).json({ error: "Seller not found" });
-    }
-    seller.product.push(savedProduct._id);
-    await seller.save();
-
-    return res.status(201).json(savedProduct);
+    console.log("Product saved successfully:", savedProduct);
+    res.status(201).json({
+      message: "Product created successfully",  
+      product: savedProduct,
+    });
   } catch (error) {
     console.error("Error in createProduct controller:", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -73,7 +75,7 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productId = req.params.productId
-  const sellerId=req.cookies.sellerId
+  const userId=req.cookies.userId
   const allowedUpdates = [
       "title",
       "description",
@@ -81,6 +83,12 @@ const updateProduct = async (req, res) => {
       "discountPrice",
       "brand",
       "color",
+      "model",
+      "totalPrice",
+      "discountPercentage",
+      "category",
+      "quantity",
+      "finalPrice",
       "productImages"
   ];
 
@@ -99,11 +107,11 @@ const updateProduct = async (req, res) => {
   try {
     console.log("Updates to apply:", updates);
     
-      const productToUpdate = await Product.find({ _id: productId, seller: sellerId });
+      const productToUpdate = await Product.find({ _id: productId, user: userId });
       console.log("Found Product:", productToUpdate);
       
       const updatedProduct = await Product.findOneAndUpdate(
-          { _id: productId, seller: sellerId },
+          { _id: productId, user: userId },
           { $set: updates },
           { new: true, runValidators: true }
       );
@@ -200,6 +208,7 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+
 const createMultipleProducts = async (req, res) => {
 
   const { products } = req.body;
@@ -232,6 +241,8 @@ const createMultipleProducts = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -240,3 +251,5 @@ module.exports = {
   getAllProducts,
   createMultipleProducts,
 };
+
+

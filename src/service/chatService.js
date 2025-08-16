@@ -1,12 +1,16 @@
-const ChatMessage = require('../../models/ChatMessage');
+const ChatMessage = require('../models/chat/message');
+const { uploadToS3 } = require('../middleware/chat');
 
 exports.sendMessage = async (req, res) => {
   const sender = req.cookies.userId; 
-
   const { receiver, message } = req.body;
 
   try {
-    let fileUrl = req.file ? req.file.location : null;
+    let fileUrl = null;
+    if (req.file) {
+      const urls = await uploadToS3([req.file]);
+      fileUrl = urls[0];
+    }
 
     const newMessage = new ChatMessage({
       sender,
@@ -36,8 +40,8 @@ exports.getChatHistory = async (req, res) => {
 
     const messages = await ChatMessage.find({
       $or: [
-        { sender: userId, receiver: receiverId },
-        { sender: receiverId, receiver: userId },
+        { sender: userId, receiver: receiverId ,senderDeleted: false},
+        { sender: receiverId, receiver: userId ,receiverDeleted: false},
       ],
     }).sort({ createdAt: 1 });
 
@@ -48,23 +52,73 @@ exports.getChatHistory = async (req, res) => {
   }
 };
 
-exports.deleteMessage = async (req, res) => {
+exports.seenMessage = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { receiverId, messageId } = req.body;
+    const userId = req.cookies.userId;
+    const { messageId } = req.params;
 
-    const deletedMessage = await ChatMessage.findOneAndDelete({
-      _id: messageId,
-      sender: userId,
-      receiver: receiverId,
-    });
+    const message = await ChatMessage.findById(messageId);
 
-    if (!deletedMessage) {
-      return res.status(404).json({ message: 'Message not found or unauthorized' });
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' });
     }
-    return res.status(200).json({ message: 'Message deleted successfully' });
+
+    // Only the receiver can mark as seen
+    if (message.receiver.toString() !== userId) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    message.seen = true; // or however you track seen status
+    await message.save();
+
+    res.status(200).json({ message: 'Message marked as seen' });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+exports.deleteMessage = async (req, res) => {
+  try {
+    const userId = req.cookies.userId;
+    const { receiverId, messageId } = req.body;
+
+    const message = await ChatMessage.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    // Check if user is sender or receiver of this message
+    if (userId !== message.sender && userId !== message.receiver) {
+      return res.status(403).json({ message: 'Unauthorized to delete this message' });
+    }
+
+   // Soft delete for sender
+    if (userId === message.sender) {
+      message.senderDeleted = true;
+    }
+
+    // Soft delete for receiver
+    if (userId === message.receiver) {
+      message.receiverDeleted = true;
+    }
+
+    // If both deleted, remove message permanently
+    if (message.senderDeleted && message.receiverDeleted) {
+      await ChatMessage.findByIdAndDelete(messageId);
+      
+      return res.status(200).json({ message: 'Message deleted permanently' })}
+      else {
+      await message.save();
+      return res.status(200).json({ message: 'Message deleted for you' });
+    }
+  } catch (error) {
+    console.error(error);
+
     return res.status(500).json({ message: 'Error deleting message' });
   }
 };
+
+module.exports = exports;

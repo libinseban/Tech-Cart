@@ -1,4 +1,3 @@
-/** @format */
 
 const express = require("express");
 const userRouter = express.Router();
@@ -8,27 +7,26 @@ const userLogout = require("../../controller/userController/user.logout");
 const uploadImage = require("../other/uploadImage");
 const authenticate = require("../../middleware/authToken");
 const productImage = require("../other/productImage");
-const productController = require("../../controller/elements/productControl");
 
 const {
   newOrder,
   OrderHistory,
   findOrderById,
 } = require("../../controller/elements/orderController");
-const {
-  moveProductToCart,
-  removeWishList,
-  updateWishList,
-  getWishlist,
-  getWishlistProduct,
-} = require("../../validators/wishlist");
+// const {
+//   moveProductToCart,
+//   removeWishList,
+//   updateWishList,
+//   getWishlist,
+//   getWishlistProduct,
+// } = require("../../validators/wishlist");
 const {
   findUserCartController,
   removeItemCartController,
   addItemCartController,
   findUserCartById,
 } = require("../../controller/elements/cartControl");
-const UserController = require("../../controller/userController/userControl")
+const UserController = require("../../controller/userController/userOrder")
 
 const {
   forgetPassword,
@@ -36,8 +34,9 @@ const {
 } = require("../../controller/userController/forgetPassword");
 const ratingController = require("../../validators/rating");
 const reviewController = require("../../validators/review");
-const { getAllProducts } = require("../../controller/elements/productControl");
 const { cancelOrder } = require("../../service/orderSevice");
+const chatController = require("../../service/chatService")
+
 const { profilePicture } = require("../../test/users/userDetails");
 const { submitContact } = require("../../helper/contactController");
 const editUserProfile = require("../../test/users/editUserProfile");
@@ -52,31 +51,32 @@ userRouter.post("/logout", userLogout);
 userRouter.get("/profile", authenticate, profilePicture);
 userRouter.put("/edit/profile", authenticate, uploadImage, editUserProfile);
 
-userRouter.get("/products", getAllProducts);
+userRouter.get("/products", productController.getAllProducts);
 
-userRouter.get(
-  "/products/:productId",
-  authenticate,
-  productController.findProductById
-);
+
 userRouter.post("/contact", submitContact);
+
+
 
 userRouter.get("/test-cookie", (req, res) => {
   res.json({ userToken: req.cookies.userToken, userId: req.cookies.userId });
 });
-userRouter.post("/send-message", authenticate, upload.single('file'), sendMessage)
+
+userRouter.post("/send-message", authenticate, upload.single('file'), chatController.sendMessage)
+userRouter.get("/chat-history/:receiverId", authenticate, chatController.getChatHistory);
+userRouter.delete("/deletedMessage", authenticate, chatController.deleteMessage)
+userRouter.get("/seen/:messageId", authenticate, chatController.seenMessage);
 
 
-
-userRouter.get("/wish-list", authenticate, getWishlist);
-userRouter.get("/wish-list/get/:productId", authenticate, getWishlistProduct);
-userRouter.put("/wish-list/:productId", authenticate, updateWishList);
-userRouter.post(
-  "/wish-list/moveToCart/:productId",
-  authenticate,
-  moveProductToCart
-);
-userRouter.delete("/wish-list/delete/:productId", authenticate, removeWishList);
+// userRouter.get("/wish-list", authenticate, getWishlist);
+// userRouter.get("/wish-list/get/:productId", authenticate, getWishlistProduct);
+// userRouter.put("/wish-list/:productId", authenticate, updateWishList);
+// userRouter.post(
+//   "/wish-list/moveToCart/:productId",
+//   authenticate,
+//   moveProductToCart
+// );
+// userRouter.delete("/wish-list/delete/:productId", authenticate, removeWishList);
 
 userRouter.get("/cart", authenticate, findUserCartController);
 userRouter.get("/cart/:productId", authenticate, findUserCartById);
@@ -115,18 +115,19 @@ userRouter.delete(
 );
 
 
-userRouter.post('/createProduct',authenticate,productImage,productController.createProduct);
-userRouter.post('MultipleProducts/creates', authenticate,productController.createMultipleProducts);
-userRouter.put('/updateProduct/:productId', authenticate,productImage,productController.updateProduct);
-userRouter.get('/findProduct/:productId',authenticate, productController.findProductById);
-userRouter.get('/getAllProducts',authenticate,productController.getAllProducts);
+userRouter.post('/createProduct', authenticate, productImage, productController.createProduct);
+userRouter.post('/MultipleProducts/creates', authenticate, productController.createMultipleProducts);
+userRouter.put('/updateProduct/:productId', authenticate, productImage, productController.updateProduct);
+userRouter.get('/findProduct/:productId', authenticate, productController.findProductById);
+userRouter.get('/getAllProducts', authenticate, productController.getAllProducts);
 userRouter.delete('/deleteProduct/:productId', authenticate, productController.deleteProduct);
 
-userRouter.get('/getOrder',authenticate,UserController.getOrders)
-userRouter.put("/confirmOrder/:orderId",authenticate,UserController.confirmOrders);
-userRouter.put("/shipOrder/:orderId",authenticate,UserController.shippingOrders);
-userRouter.put("/deliver/:orderId",authenticate,UserController.deliverOrders);
-userRouter.put("/cancelOrder/:orderId",authenticate,UserController.cancelOrders);
+
+userRouter.get('/getOrder', authenticate, UserController.getOrders)
+userRouter.put("/confirmOrder/:orderId", authenticate, UserController.confirmOrders);
+userRouter.put("/shipOrder/:orderId", authenticate, UserController.shippingOrders);
+userRouter.put("/deliver/:orderId", authenticate, UserController.deliverOrders);
+userRouter.put("/cancelOrder/:orderId", authenticate, UserController.cancelOrders);
 userRouter.put("/deleteOrder/:orderId", authenticate, UserController.deleteOrders);
 
 

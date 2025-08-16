@@ -2,15 +2,15 @@ const Order = require("../../models/others/orderModel");
 const Product = require("../../models/product/productModel");
 const sendCancellationEmail = require("../../helper/sendCancellationEmail");
 
-const getSellerProducts = async (userId) => {
-  return await Product.find({ seller: userId }).select("_id").lean();
+const getProducts = async (userId) => {
+  return await Product.find({ user: userId }).select("_id").lean();
 };
 
 const getOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
 
-    const products = await getSellerProducts(userId);
+    const products = await getProducts(userId);
 
     if (!products.length) {
       return res
@@ -38,7 +38,7 @@ const confirmOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
 
-    const products = await getSellerProducts(userId);
+    const products = await getProducts(userId);
 
 
     if (!products.length) {
@@ -79,7 +79,7 @@ const shippingOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
 
-    const products = await getSellerProducts(userId);
+    const products = await getProducts(userId);
 
 
     if (!products.length) {
@@ -121,7 +121,7 @@ const deliverOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
 
-    const products = await getSellerProducts(userId);
+    const products = await getProducts(userId);
 
     if (!products.length) {
       return res
@@ -159,7 +159,7 @@ const cancelOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
 
-    const sellerProducts = await getSellerProducts(userId)
+    const sellerProducts = await getProducts(userId)
 
     if (!sellerProducts.length) {
       return res
@@ -228,7 +228,7 @@ const cancelOrders = async (req, res) => {
 const deleteOrders = async (req, res) => {
   try {
     const userId = req.cookies.userId;
-    const products = await getSellerProducts(userId);
+    const products = await getProducts(userId);
     if (!products.length) {
       return res.status(400).json({ message: "No products found for this seller." });
     }

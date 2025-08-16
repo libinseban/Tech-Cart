@@ -28,6 +28,9 @@ const chatMessageSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+      senderDeleted: { type: Boolean, default: false },
+  receiverDeleted: { type: Boolean, default: false },
+    seen: { type: Boolean, default: false }, 
 });
 
 const chatMessage = mongoose.model("chatMessage", chatMessageSchema);

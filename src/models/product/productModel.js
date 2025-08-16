@@ -20,6 +20,11 @@ const productSchema = new mongoose.Schema({
         default:0
        }
     ,
+    model:{
+        type: String,
+        required: false,
+    },
+    
     discountPercentage: {
         type: Number,
         default: 0
@@ -37,7 +42,7 @@ const productSchema = new mongoose.Schema({
     },
     color: [{
         type: String,
-        required: true,
+        required: false,
     }],
     productImages: [{
         type: String,
@@ -58,6 +63,10 @@ const productSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+    },
+    finalPrice:{
+type: Number,
+        required: true,
     },
     category: { type: String },
     user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]

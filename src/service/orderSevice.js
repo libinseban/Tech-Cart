@@ -88,8 +88,8 @@ const createOrder = async (userId, shippingAddress) => {
       path: 'cartItem',
       populate: {
         path: 'product',
-        select: 'price discountPrice seller title', 
-        populate: { path: 'seller', select: 'email' }
+        select: 'price discountPrice user title brand color model finalPrice', 
+        populate: { path: 'user', select: 'email' }
       }
     });
     
@@ -103,18 +103,18 @@ const createOrder = async (userId, shippingAddress) => {
     let totalItem = 0;
 
     cart.cartItem.forEach(item => {
-      totalPrice += (item.product.price * item.quantity)
+      totalPrice += (item.product.finalPrice * item.quantity)
       totalDiscountPrice += item.product.discountPrice * item.quantity;
       totalItem += item.quantity;
     });
 
-    const price = totalPrice - totalDiscountPrice;
+    const finalPrice = totalPrice - totalDiscountPrice;
     const products = cart.cartItem.map(item => item.product._id);
 
 
     const paymentCapture = 1; 
     const razorpayOptions = {
-      amount: price, 
+      amount: finalPrice, 
       currency: "INR",
       receipt: `receipt_order_${Math.random() * 10000}`,
       payment_capture: paymentCapture
@@ -130,7 +130,6 @@ const createOrder = async (userId, shippingAddress) => {
       totalPrice,
       totalDiscountPrice,
       totalItem,
-      price,
       products,
       paymentId: razorpayOrder.id,  
       orderStatus: 'PENDING',    
@@ -141,37 +140,37 @@ const createOrder = async (userId, shippingAddress) => {
 
 
 
-    const sellers = new Set();
+    const userData = new Set();
     cart.cartItem.forEach(item => {
-      if (item.product.seller) {
-        sellers.add(item.product.seller);
+      if (item.product.user) {
+        userData.add(item.product.user);
       }
     });
 
-    const sellerDetails = await Promise.all([...sellers].map(sellerId => Seller.findById(sellerId)));
-    for (const sellerId of sellerDetails) {
-      const seller = await Seller.findById(sellerId);
+    const userDetails = await Promise.all([...userData].map(userId => User.findById(userId)));
+    for (const userId of userDetails) {
+      const user = await User.findById(userId);
       
-      const sellerProducts = cart.cartItem
-        .filter(item => item.product.seller.toString() === sellerId.toString())
+      const userProducts = cart.cartItem
+        .filter(item => item.product.user.toString() === userId.toString())
         .map(item => item.product.title) 
       
-      const productNames = sellerProducts.join(", "); 
+      const productNames = userProducts.join(", "); 
 
-      if (seller && seller.email) {
-        console.log(`Attempting to send email to seller: ${seller.email}`);
+      if (user && user.email) {
+        console.log(`Attempting to send email to user: ${user.email}`);
         await sendEmail(
-          seller.email,
-          seller.name,
+          user.email,
+          user.name,
           'New Order Placed',
           productNames,
           order.address,
           order.orderDate
         );
         
-        console.log(`Email sent to seller: ${seller.email}`);
+        console.log(`Email sent to seller: ${user.email}`);
       } else {
-        console.warn(`No email found for seller with ID: ${sellerId}`);
+        console.warn(`No email found for seller with ID: ${userId}`);
       }
     }
     
@@ -222,15 +221,15 @@ const cancelOrder = async (req, res) => {
     
     
     for (const product of order.products) {
-      const productDetails = await Product.findById(productId).populate('seller');
+      const productDetails = await Product.findById(productId).populate('user', 'email name');
       
-      if (productDetails && productDetails.seller && productDetails.seller.email) {
-        const sellerEmail = productDetails.seller.email;
+      if (productDetails && productDetails.user && productDetails.user.email) {
+        const sellerEmail = productDetails.user.email;
         const subject = `Order ${order.orderId} Cancelled`;
         const message = `Dear ${productDetails.seller.name}, the order containing your product
          ${productDetails.title} has been cancelled by the user.`;
 
-       await sendEmail(sellerEmail, productDetails.seller.name, subject, productDetails.title, {},message, new Date());
+       await sendEmail(sellerEmail, productDetails.user.name, subject, productDetails.title, {},message, new Date());
       
       }
     }
@@ -304,5 +303,6 @@ async function findOrder(productId, userId) {
     cancelOrder,
     findOrder,
     userOrderHistory,
+    
   }
 

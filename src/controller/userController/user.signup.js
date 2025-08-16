@@ -38,17 +38,23 @@ const userSignUpController = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("userToken", userToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    });
-    res.cookie("userId", savedUser._id.toString(), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    });
+ 
+        res.cookie("userId", user._id.toString(), {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
+          maxAge: 5 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
 
+        res.cookie("userToken", userToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'None',
+          maxAge: 5 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        
     return res.status(201).json({
       userId: savedUser._id,
       role: savedUser.role,

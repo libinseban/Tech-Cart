@@ -48,9 +48,11 @@ const userShema=new mongoose.Schema({
                isApproved: {
         type: Boolean,
         default: false 
-    },
+    }, 
       
       
+}, { timestamps: true }, {
+  useFindAndModify: false, 
 })
 const User=mongoose.model("User",userShema)
 
